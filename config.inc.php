@@ -161,6 +161,9 @@ $CONF['admin_email'] = '';
 // from Send Email / Broadcast message pages.
 // Leave blank to send emails without authentification
 $CONF['admin_smtp_password'] = '';
+// add SMTP username for 465 587 login
+// did a new smtp
+$CONF['smtp_username'] = 'noreply@domain.tld';
 
 // Site admin name
 // This will be used as signature in notification messages
