@@ -2467,3 +2467,14 @@ function upgrade_1852_mysql()
 
     upgrade_1846_mysql();
 }
+
+/**
+ * Add per-mailbox and per-domain maximum message size columns (for policyd-msgsize)
+ * -1 = unlimited (bypass domain limit), 0 = inherit/global, >0 = max size in bytes
+ * @return void
+ */
+function upgrade_1853()
+{
+    _db_add_field('mailbox', 'max_msg_mailsize', "BIGINT NOT NULL DEFAULT 0", 'quota');
+    _db_add_field('domain', 'max_domain_msg_mailsize', "BIGINT NOT NULL DEFAULT 0", 'maxquota');
+}

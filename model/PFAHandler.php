@@ -1059,6 +1059,26 @@ abstract class PFAHandler
     }
 
     /**
+     * check if value is a strict integer >= -1 (used by quota, max_msg_mailsize, max_domain_msg_mailsize)
+     * Rejects floats and scientific notation (e.g. "1e20") to prevent overflow/type-juggling.
+     * @param string $field
+     * @param mixed $val
+     * @return boolean
+     */
+    protected function _inp_int($field, $val)
+    {
+        if ($val === '' || $val === null) {
+            return true;
+        }
+        $str = trim((string)$val);
+        $valid = (preg_match('/^-?\d{1,9}$/', $str) === 1) && (intval($str) >= -1);
+        if (!$valid) {
+            $this->errormsg[$field] = Config::Lang_f('must_be_numeric', $field);
+        }
+        return $valid;
+    }
+
+    /**
      * check if value is (numeric) boolean - in other words: 0 or 1
      * @param string $field
      * @param string $val

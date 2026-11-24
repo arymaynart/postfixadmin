@@ -533,6 +533,12 @@ $PALANG['session_expired_button'] = 'Continue'; # XXX
 $PALANG['pTOTP_enabled'] = 'TOTP is enabled.'; # XXX
 $PALANG['pTOTP_restart'] = 'Reset TOTP'; # XXX
 
+$PALANG['pEdit_mailbox_max_msg_mailsize'] = 'Tamanho máximo de Mensagem';
+$PALANG['pEdit_mailbox_max_msg_mailsize_desc'] = 'Tamanho máximo das mensagens em MB para este usuário (0 = herdar do domínio | -1 = ilimitado / teto global do servidor)';
+$PALANG['pEdit_domain_max_msg_mailsize'] = 'Tamanho máximo da mensagem';
+$PALANG['pEdit_domain_max_msg_mailsize_desc'] = 'Tamanho máximo das mensagens em MB para este domínio (0 = utilizar global | -1 = ilimitado / teto global do servidor)';
+$PALANG['pEdit_mailbox_max_msg_mailsize_error'] = 'O limite da caixa não pode exceder o limite configurado para o domínio (%s MB).';
+
 $PALANG['please_keep_this_as_last_entry'] = ''; # needed for language-check.sh
 /* vim: set expandtab ft=php softtabstop=3 tabstop=3 shiftwidth=3: */
 ?>

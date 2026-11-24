@@ -49,6 +49,7 @@ class MailboxHandler extends PFAHandler
             ),
             'name' => self::pacol(1, 1, 1, 'text', 'name', 'pCreate_mailbox_name_text', ''),
             'quota' => self::pacol(1, 1, 1, 'int', 'pEdit_mailbox_quota', 'pEdit_mailbox_quota_text', ''), # in MB
+            'max_msg_mailsize' => self::pacol(1, 1, 1, 'int', 'pEdit_mailbox_max_msg_mailsize', 'pEdit_mailbox_max_msg_mailsize_desc', 0),
             # read_from_db_postprocess() also sets 'quotabytes' for use in init()
             # TODO: read used quota from quota/quota2 table
             'active' => self::pacol(1, 1, 1, 'bool', 'active', '', 1),
@@ -236,6 +237,10 @@ class MailboxHandler extends PFAHandler
                 $db_result[$key]['quotabytes'] = -1;
                 $db_result[$key]['quota'] = -1;
             }
+            if (isset($row['max_msg_mailsize'])) {
+                $db_result[$key]['max_msg_mailsize_bytes'] = $row['max_msg_mailsize'];
+                $db_result[$key]['max_msg_mailsize'] = divide_quota((int)$row['max_msg_mailsize']);
+            }
 
             if (Config::bool('password_expiration') && isset($row['password_expiry'], $row['domain'])) {
                 $domain = (string)$row['domain'];
@@ -270,6 +275,26 @@ class MailboxHandler extends PFAHandler
         // Avoid trying to store '' in an integer field
         if (isset($this->values['quota']) && $this->values['quota'] === '') {
             $this->values['quota'] = 0;
+        }
+        // Convert max_msg_mailsize (MB -> bytes; -1 = unlimited, 0 = inherit from domain)
+        if (isset($this->values['max_msg_mailsize'])) {
+            $raw = $this->values['max_msg_mailsize'];
+            $mult = intval(Config::read_string('quota_multiplier'));
+            if ($mult <= 0) {
+                $mult = 1024 * 1024;
+            }
+            if ($raw === '' || $raw === null) {
+                $this->values['max_msg_mailsize'] = 0;
+            } else {
+                $mb = intval($raw);
+                if ($mb === -1) {
+                    $this->values['max_msg_mailsize'] = -1;
+                } elseif ($mb > 0) {
+                    $this->values['max_msg_mailsize'] = $mb * $mult;
+                } else {
+                    $this->values['max_msg_mailsize'] = 0;
+                }
+            }
         }
         $ah = new AliasHandler($this->new, $this->admin_username);
 
@@ -428,6 +453,32 @@ class MailboxHandler extends PFAHandler
         if (!$this->check_quota($val)) {
             $this->errormsg[$field] = Config::lang($this->quota_error);
             return false;
+        }
+        return true;
+    }
+
+    /**
+     * Validate max_msg_mailsize: prevent integer overflow and stop non-superadmins
+     * from bypassing a positive domain-level limit (via -1 or higher MB values).
+     */
+    protected function _validate_max_msg_mailsize($field, $val)
+    {
+        if ($val === '' || $val === null) {
+            return true;
+        }
+        $mb = intval($val);
+        if ($mb < -1 || $mb > 102400) {
+            $this->errormsg[$field] = Config::Lang_f('must_be_numeric', $field);
+            return false;
+        }
+        if (!$this->is_superadmin && $mb !== 0) {
+            list(/*NULL*/, $domain) = explode('@', $this->id);
+            $dom = get_domain_properties($domain);
+            $dom_mb = isset($dom['max_domain_msg_mailsize']) ? intval($dom['max_domain_msg_mailsize']) : 0;
+            if ($dom_mb > 0 && ($mb === -1 || $mb > $dom_mb)) {
+                $this->errormsg[$field] = Config::lang_f('pEdit_mailbox_max_msg_mailsize_error', (string)$dom_mb);
+                return false;
+            }
         }
         return true;
     }
