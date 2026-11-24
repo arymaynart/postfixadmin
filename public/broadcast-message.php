@@ -14,16 +14,7 @@
  *
  * File: broadcast-message.php
  * Used to send a message to _ALL_ users with mailboxes on this server.
- *
- * Template File: broadcast-message.tpl
- *
- * Template Variables: -none-
- *
- * Form POST \ GET Variables:
- *
- * name
- * subject
- * message
+ * Supports HTML wrapper (templates/email_base.html) and user/domain placeholders.
  */
 
 require_once('common.php');
@@ -36,6 +27,7 @@ if (Config::bool('sendmail_all_admins')) {
 
 $CONF = Config::getInstance()->getAll();
 $smarty = PFASmarty::getInstance();
+$PALANG = $CONF['__LANG'];
 
 if ($CONF['sendmail'] != 'YES') {
     header("Location: main.php");
@@ -48,51 +40,79 @@ $smtp_from_email = smtp_get_admin_email();
 $allowed_domains = list_domains_for_admin(authentication_get_username());
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    if (safepost('token') != ($_SESSION['PFA_token'] ?? '')) {
+    if (!isset($_SESSION['PFA_token']) || !hash_equals((string)$_SESSION['PFA_token'], safepost('token'))) {
         pfa_handle_invalid_token();
     }
 
-    if (empty($_POST['subject']) || empty($_POST['message']) || empty($_POST['name']) || empty($_POST['domains']) || !is_array($_POST['domains'])) {
+    $posted_domains = (isset($_POST['domains']) && is_array($_POST['domains'])) ? $_POST['domains'] : array();
+    $wanted_domains = array_intersect($allowed_domains, $posted_domains);
+
+    if (empty($_POST['subject']) || empty($_POST['message']) || empty($_POST['name']) || empty($wanted_domains)) {
         $error = 1;
         flash_error($PALANG['pBroadcast_error_empty']);
     } else {
-        $wanted_domains = array_intersect($allowed_domains, $_POST['domains']);
-
         $table_mailbox = table_by_key('mailbox');
         $table_alias = table_by_key('alias');
 
-        $recipients = array();
-
-        $q = "SELECT username from $table_mailbox WHERE active='" . db_get_boolean(true) . "' AND ".db_in_clause("domain", $wanted_domains);
+        $q = "SELECT username FROM $table_mailbox WHERE active='" . db_get_boolean(true) . "' AND " . db_in_clause("domain", $wanted_domains);
         if (intval(safepost('mailboxes_only')) == 0) {
-            $q .= " UNION SELECT goto FROM $table_alias WHERE active='" . db_get_boolean(true) . "' AND ".db_in_clause("domain", $wanted_domains)." AND goto NOT IN ($q)";
+            $q .= " UNION SELECT goto FROM $table_alias WHERE active='" . db_get_boolean(true) . "' AND " . db_in_clause("domain", $wanted_domains) . " AND goto NOT IN ($q)";
         }
         $result = db_query_all($q);
-        $recipients = array_column($result, 'username');
-
-        $recipients = array_unique($recipients);
+        $recipients = array_unique(array_column($result, 'username'));
 
         if (count($recipients) > 0) {
             mb_internal_encoding("UTF-8");
-            $b_name = mb_encode_mimeheader($_POST['name'], 'UTF-8', 'Q');
-            $b_subject = mb_encode_mimeheader($_POST['subject'], 'UTF-8', 'Q');
-            $b_message = chunk_split(base64_encode($_POST['message']));
+            $clean_name = trim(preg_replace('/[\r\n]+/', ' ', (string)$_POST['name']));
+            $clean_subject = trim(preg_replace('/[\r\n]+/', ' ', (string)$_POST['subject']));
+            $b_name = mb_encode_mimeheader($clean_name, 'UTF-8', 'Q');
+            $b_subject = mb_encode_mimeheader($clean_subject, 'UTF-8', 'Q');
 
-            $serverName = isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : php_uname('n'); // ??
+            $raw_message = (string)$_POST['message'];
 
-            $i = 0;
+            $rawServerName = isset($_SERVER['SERVER_NAME']) ? (string)$_SERVER['SERVER_NAME'] : php_uname('n');
+            $serverName = preg_replace('/[^a-zA-Z0-9.\-]/', '', $rawServerName);
+            if (empty($serverName)) {
+                $serverName = 'localhost.localdomain';
+            }
+
             foreach ($recipients as $rcpt) {
-                $fTo = $rcpt;
-                $fHeaders  = 'To: ' . $fTo . "\n";
-                $fHeaders .= 'From: ' . $b_name . ' <' . $smtp_from_email . ">\n";
-                $fHeaders .= 'Subject: ' . $b_subject . "\n";
-                $fHeaders .= 'MIME-Version: 1.0' . "\n";
-                $fHeaders .= 'Content-Type: text/plain; charset=UTF-8' . "\n";
-                $fHeaders .= 'Content-Transfer-Encoding: base64' . "\n";
-                $fHeaders .= 'Date: ' . date('r', time()) . "\n";
-                $fHeaders .= 'Message-ID: <' . microtime(true) . '-' . md5($smtp_from_email . $fTo) . "@{$serverName}>\n\n";
+                $fTo = trim(preg_replace('/[\r\n<>]+/', '', (string)$rcpt));
+                if ($fTo === '') {
+                    continue;
+                }
 
-                $fHeaders .= $b_message;
+                $vars = fetch_user_and_domain_vars($fTo);
+                $is_html = (strip_tags($raw_message) !== $raw_message);
+                $filled_fragment = apply_placeholders($raw_message, $vars, $is_html);
+                $msg_id = '<' . sprintf('%.6f', microtime(true)) . '-' . md5($smtp_from_email . $fTo) . "@{$serverName}>";
+
+                if ($is_html) {
+                    $final_html = build_html_from_template($filled_fragment, $clean_subject);
+                    if ($final_html === false) {
+                        $final_html = $filled_fragment;
+                    }
+                    list($mime_headers, $mime_body) = build_multipart_message(strip_tags($final_html), $final_html);
+
+                    $fHeaders  = 'To: ' . $fTo . "\r\n";
+                    $fHeaders .= 'From: ' . $b_name . ' <' . $smtp_from_email . ">\r\n";
+                    $fHeaders .= 'Subject: ' . $b_subject . "\r\n";
+                    $fHeaders .= 'Date: ' . date('r') . "\r\n";
+                    $fHeaders .= 'Message-ID: ' . $msg_id . "\r\n";
+                    $fHeaders .= rtrim($mime_headers, "\r\n") . "\r\n\r\n";
+                    $fHeaders .= $mime_body;
+                } else {
+                    $b_message = chunk_split(base64_encode($filled_fragment));
+                    $fHeaders  = 'To: ' . $fTo . "\r\n";
+                    $fHeaders .= 'From: ' . $b_name . ' <' . $smtp_from_email . ">\r\n";
+                    $fHeaders .= 'Subject: ' . $b_subject . "\r\n";
+                    $fHeaders .= 'Date: ' . date('r') . "\r\n";
+                    $fHeaders .= 'Message-ID: ' . $msg_id . "\r\n";
+                    $fHeaders .= "MIME-Version: 1.0\r\n";
+                    $fHeaders .= "Content-Type: text/plain; charset=UTF-8\r\n";
+                    $fHeaders .= "Content-Transfer-Encoding: base64\r\n\r\n";
+                    $fHeaders .= $b_message . "\r\n";
+                }
 
                 if (!smtp_mail($fTo, $smtp_from_email, $fHeaders, smtp_get_admin_password())) {
                     flash_error(Config::lang_f('pSendmail_result_error', $fTo));
@@ -102,9 +122,11 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
             }
         }
         flash_info($PALANG['pBroadcast_success']);
+        $smarty->assign('allowed_domains', $allowed_domains);
+        $smarty->assign('smtp_from_email', $smtp_from_email);
+        $smarty->assign('error', $error);
         $smarty->assign('smarty_template', 'broadcast-message');
         $smarty->display('index.tpl');
-        //		echo '<p>'.$PALANG['pBroadcast_success'].'</p>';
     }
 }
 
@@ -114,8 +136,6 @@ if ($_SERVER['REQUEST_METHOD'] == "GET" || $error == 1) {
     $smarty->assign('error', $error);
     $smarty->assign('smarty_template', 'broadcast-message');
     $smarty->display('index.tpl');
-
-    //   include ("templates/broadcast-message.tpl");
 }
 
 /* vim: set expandtab softtabstop=3 tabstop=3 shiftwidth=3: */

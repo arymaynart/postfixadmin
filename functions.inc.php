@@ -1379,7 +1379,11 @@ function remove_from_array($array, $item)
 function enable_socket_crypto($fh)
 {
     stream_set_blocking($fh, true);
-    $enabled = stream_socket_enable_crypto($fh, true, STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT) === true;
+    $method = STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT;
+    if (defined('STREAM_CRYPTO_METHOD_TLSv1_3_CLIENT')) {
+        $method |= STREAM_CRYPTO_METHOD_TLSv1_3_CLIENT;
+    }
+    $enabled = @stream_socket_enable_crypto($fh, true, $method) === true;
     stream_set_blocking($fh, true);
     return $enabled;
 }
@@ -1401,6 +1405,12 @@ function smtp_mail($to, $from, $data, $password = "", $body = "")
 {
     global $CONF;
 
+    $to = trim(preg_replace('/[\r\n<>]+/', '', (string)$to));
+    $from = trim(preg_replace('/[\r\n<>]+/', '', (string)$from));
+    if ($to === '' || $from === '') {
+        return false;
+    }
+
     $smtpd_server = $CONF['smtp_server'];
     $smtpd_port = $CONF['smtp_port'];
     $smtpd_type = $CONF['smtp_type'];
@@ -1414,19 +1424,35 @@ function smtp_mail($to, $from, $data, $password = "", $body = "")
     $timeout = 30;
 
     if ($body != "") {
-        $maildata =
-            "To: " . $to . "\n"
-            . "From: " . $from . "\n"
-            . "Subject: " . encode_header($data) . "\n"
-            . "MIME-Version: 1.0\n"
-            . "Date: " . date('r') . "\n"
-            . "Content-Type: text/plain; charset=utf-8\n"
-            . "Content-Transfer-Encoding: 8bit\n"
-            . "\n"
-            . $body;
+        $clean_subject = trim(preg_replace('/[\r\n]+/', ' ', (string)$data));
+        if (strip_tags($body) !== $body) {
+            list($mime_headers, $mime_body) = build_multipart_message(strip_tags($body), $body);
+            $maildata =
+                "To: " . $to . "\r\n"
+                . "From: " . $from . "\r\n"
+                . "Subject: " . encode_header($clean_subject) . "\r\n"
+                . "Date: " . date('r') . "\r\n"
+                . rtrim($mime_headers, "\r\n") . "\r\n\r\n"
+                . $mime_body;
+        } else {
+            $maildata =
+                "To: " . $to . "\r\n"
+                . "From: " . $from . "\r\n"
+                . "Subject: " . encode_header($clean_subject) . "\r\n"
+                . "MIME-Version: 1.0\r\n"
+                . "Date: " . date('r') . "\r\n"
+                . "Content-Type: text/plain; charset=utf-8\r\n"
+                . "Content-Transfer-Encoding: 8bit\r\n"
+                . "\r\n"
+                . $body;
+        }
     } else {
         $maildata = $data;
     }
+
+    // Normalize to CRLF and apply RFC 5321 SMTP dot-stuffing
+    $maildata = preg_replace('/\r?\n/', "\r\n", $maildata);
+    $maildata = preg_replace('/^\./m', '..', $maildata);
 
     $fh = @fsockopen($smtpd_server, $smtpd_port, $errno, $errstr, $timeout);
 
@@ -1434,6 +1460,8 @@ function smtp_mail($to, $from, $data, $password = "", $body = "")
         error_log("fsockopen failed - errno: $errno - errstr: $errstr");
         return false;
     }
+
+    stream_set_timeout($fh, 15);
 
     try {
         if ($smtpd_type === "tls") {
@@ -1458,9 +1486,10 @@ function smtp_mail($to, $from, $data, $password = "", $body = "")
         }
 
         if (!empty($password)) {
+            $auth_user = !empty($CONF['smtp_username']) ? trim(preg_replace('/[\r\n]+/', '', (string)$CONF['smtp_username'])) : $from;
             smtp_write($fh, "AUTH LOGIN\r\n");
             smtp_require_response($fh, 334);
-            smtp_write($fh, base64_encode($from) . "\r\n");
+            smtp_write($fh, base64_encode($auth_user) . "\r\n");
             smtp_require_response($fh, 334);
             smtp_write($fh, base64_encode($password) . "\r\n");
             smtp_require_response($fh, 235);
@@ -1484,6 +1513,198 @@ function smtp_mail($to, $from, $data, $password = "", $body = "")
         }
         return false;
     }
+}
+
+/**
+ * Build MIME multipart/alternative headers and body (text/plain + text/html).
+ *
+ * @param string $text_plain
+ * @param string $html_body
+ * @return array{0: string, 1: string}
+ */
+function build_multipart_message(string $text_plain, string $html_body): array
+{
+    $boundary = '=_PFA_' . md5(uniqid((string)microtime(true), true));
+    $mime_headers  = "MIME-Version: 1.0\r\n";
+    $mime_headers .= "Content-Type: multipart/alternative; boundary=\"$boundary\"\r\n";
+
+    $part_text = quoted_printable_encode($text_plain);
+    $part_html = quoted_printable_encode($html_body);
+
+    $mime_body  = "--$boundary\r\n";
+    $mime_body .= "Content-Type: text/plain; charset=UTF-8\r\n";
+    $mime_body .= "Content-Transfer-Encoding: quoted-printable\r\n\r\n";
+    $mime_body .= $part_text . "\r\n\r\n";
+
+    $mime_body .= "--$boundary\r\n";
+    $mime_body .= "Content-Type: text/html; charset=UTF-8\r\n";
+    $mime_body .= "Content-Transfer-Encoding: quoted-printable\r\n\r\n";
+    $mime_body .= $part_html . "\r\n\r\n";
+
+    $mime_body .= "--$boundary--\r\n";
+
+    return array($mime_headers, $mime_body);
+}
+
+/**
+ * Wrap an HTML fragment into templates/email_base.html with escaped subject.
+ *
+ * @param string $html_fragment
+ * @param string $subject
+ * @return string|false
+ */
+function build_html_from_template(string $html_fragment, string $subject = '')
+{
+    $template_file = __DIR__ . '/templates/email_base.html';
+    if (!is_file($template_file)) {
+        error_log("HTML email template not found: $template_file");
+        return false;
+    }
+
+    $template = file_get_contents($template_file);
+    if ($template === false) {
+        return false;
+    }
+
+    $html_fragment = mb_convert_encoding($html_fragment, 'UTF-8', 'UTF-8');
+    $subject = mb_convert_encoding($subject, 'UTF-8', 'UTF-8');
+    $subject_html = htmlspecialchars($subject, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+
+    $replacements = array(
+        '{{CORPO_MENSAGEM}}' => $html_fragment,
+        '{{SUBJECT}}'        => $subject_html,
+    );
+
+    return str_replace(array_keys($replacements), array_values($replacements), $template);
+}
+
+/**
+ * Format bytes as human-readable KB/MB/GB.
+ *
+ * @param int|float|string $bytes
+ * @return string
+ */
+function hr_bytes($bytes): string
+{
+    $bytes = (float)$bytes;
+    if ($bytes >= 1073741824) {
+        return round($bytes / 1073741824, 2) . ' GB';
+    }
+    if ($bytes >= 1048576) {
+        return round($bytes / 1048576, 2) . ' MB';
+    }
+    if ($bytes >= 1024) {
+        return round($bytes / 1024, 2) . ' KB';
+    }
+    return $bytes . ' B';
+}
+
+/**
+ * Fetch mailbox & domain template placeholder variables (with static domain cache).
+ *
+ * @param string $email
+ * @return array<string, string>
+ */
+function fetch_user_and_domain_vars(string $email): array
+{
+    static $domain_cache = array();
+    $ret = array();
+    $table_mailbox = table_by_key('mailbox');
+    $table_domain  = table_by_key('domain');
+
+    $user = db_query_one("SELECT * FROM $table_mailbox WHERE username = :email LIMIT 1", array('email' => $email));
+    if (is_array($user) && !empty($user)) {
+        $ret['USERNAME']             = (string)($user['username'] ?? '');
+        $ret['NAME']                 = (string)($user['name'] ?? '');
+        $ret['LOCAL_PART']           = (string)($user['local_part'] ?? '');
+        $ret['DOMAIN']               = (string)($user['domain'] ?? '');
+        $ret['QUOTA']                = (string)($user['quota'] ?? '0');
+        $ret['USER_QUOTA']           = hr_bytes($user['quota'] ?? 0);
+        $ret['CREATED']              = (string)($user['created'] ?? '');
+        $ret['MODIFIED']             = (string)($user['modified'] ?? '');
+        $ret['PHONE']                = (string)($user['phone'] ?? '');
+        $ret['EMAIL_OTHER']          = (string)($user['email_other'] ?? '');
+        $mb_msgsize                  = intval($user['max_msg_mailsize'] ?? 0);
+        $ret['MAX_MSG_MAILSIZE']     = (string)$mb_msgsize;
+        if ($mb_msgsize < 0) {
+            $ret['MAX_MSG_MAILSIZE_FMT'] = 'Ilimitado';
+        } elseif ($mb_msgsize === 0) {
+            $ret['MAX_MSG_MAILSIZE_FMT'] = 'Padrão do domínio';
+        } else {
+            $ret['MAX_MSG_MAILSIZE_FMT'] = hr_bytes($mb_msgsize);
+        }
+    } else {
+        $ret = array_merge($ret, array_fill_keys(
+            array('USERNAME', 'NAME', 'LOCAL_PART', 'DOMAIN', 'QUOTA', 'USER_QUOTA', 'CREATED', 'MODIFIED', 'PHONE', 'EMAIL_OTHER', 'MAX_MSG_MAILSIZE', 'MAX_MSG_MAILSIZE_FMT'),
+            ''
+        ));
+    }
+
+    $domain_value = $ret['DOMAIN'] !== '' ? $ret['DOMAIN'] : '';
+    if ($domain_value !== '') {
+        if (!array_key_exists($domain_value, $domain_cache)) {
+            $dom = db_query_one("SELECT * FROM $table_domain WHERE domain = :domain LIMIT 1", array('domain' => $domain_value));
+            if (is_array($dom) && !empty($dom)) {
+                $dom_msgsize = intval($dom['max_domain_msg_mailsize'] ?? 0);
+                if ($dom_msgsize < 0) {
+                    $dom_msgsize_fmt = 'Ilimitado';
+                } elseif ($dom_msgsize === 0) {
+                    $dom_msgsize_fmt = 'Global do servidor';
+                } else {
+                    $dom_msgsize_fmt = hr_bytes($dom_msgsize);
+                }
+                $domain_cache[$domain_value] = array(
+                    'DOMAIN_DESCRIPTION'          => (string)($dom['description'] ?? ''),
+                    'DOMAIN_MAXQUOTA'             => (string)($dom['maxquota'] ?? '0'),
+                    'DOMAIN_MAXQUOTA_FMT'         => hr_bytes($dom['maxquota'] ?? 0),
+                    'DOMAIN_CREATED'              => (string)($dom['created'] ?? ''),
+                    'DOMAIN_MODIFIED'             => (string)($dom['modified'] ?? ''),
+                    'DOMAIN_MAX_MSG_MAILSIZE'     => (string)$dom_msgsize,
+                    'DOMAIN_MAX_MSG_MAILSIZE_FMT' => $dom_msgsize_fmt,
+                );
+            } else {
+                $domain_cache[$domain_value] = array_fill_keys(
+                    array('DOMAIN_DESCRIPTION', 'DOMAIN_MAXQUOTA', 'DOMAIN_MAXQUOTA_FMT', 'DOMAIN_CREATED', 'DOMAIN_MODIFIED', 'DOMAIN_MAX_MSG_MAILSIZE', 'DOMAIN_MAX_MSG_MAILSIZE_FMT'),
+                    ''
+                );
+            }
+        }
+        $ret = array_merge($ret, $domain_cache[$domain_value]);
+    } else {
+        $ret = array_merge($ret, array_fill_keys(
+            array('DOMAIN_DESCRIPTION', 'DOMAIN_MAXQUOTA', 'DOMAIN_MAXQUOTA_FMT', 'DOMAIN_CREATED', 'DOMAIN_MODIFIED', 'DOMAIN_MAX_MSG_MAILSIZE', 'DOMAIN_MAX_MSG_MAILSIZE_FMT'),
+            ''
+        ));
+    }
+
+    return $ret;
+}
+
+/**
+ * Replace {{KEY}} placeholders in a message template.
+ * Set $escapeHtml = true when interpolating into HTML messages to prevent HTML injection.
+ *
+ * @param string $text
+ * @param array<string, string> $vars
+ * @param bool $escapeHtml
+ * @return string
+ */
+function apply_placeholders(string $text, array $vars, bool $escapeHtml = false): string
+{
+    if (empty($vars)) {
+        return $text;
+    }
+    $search = array();
+    $replace = array();
+    foreach ($vars as $k => $v) {
+        $search[] = '{{' . $k . '}}';
+        $val = (string)$v;
+        if ($escapeHtml) {
+            $val = htmlspecialchars($val, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        }
+        $replace[] = $val;
+    }
+    return str_replace($search, $replace, $text);
 }
 
 /**

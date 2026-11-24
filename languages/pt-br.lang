@@ -526,12 +526,12 @@ $PALANG['mailbox_post_TOTP_change_failed'] = 'A caixa de correio post totp secre
 $PALANG['TOTP_already_configured'] = 'TOTP já está configurado para esta conta, você quer mudar seu segredo?';
 
 $PALANG['pApp_passwords_add'] = 'Adicionar senha específica do aplicativo';
-$PALANG['session_expired_title'] = 'Session expired'; # XXX
-$PALANG['session_expired_message'] = 'The page token is no longer valid. Please return and try again.'; # XXX
-$PALANG['session_expired_button'] = 'Continue'; # XXX
+$PALANG['session_expired_title'] = 'Sessão expirada';
+$PALANG['session_expired_message'] = 'O token da página não é mais válido. Por favor, volte e tente novamente.';
+$PALANG['session_expired_button'] = 'Continuar';
 
-$PALANG['pTOTP_enabled'] = 'TOTP is enabled.'; # XXX
-$PALANG['pTOTP_restart'] = 'Reset TOTP'; # XXX
+$PALANG['pTOTP_enabled'] = 'TOTP está ativado.';
+$PALANG['pTOTP_restart'] = 'Redefinir TOTP';
 
 $PALANG['pEdit_mailbox_max_msg_mailsize'] = 'Tamanho máximo de Mensagem';
 $PALANG['pEdit_mailbox_max_msg_mailsize_desc'] = 'Tamanho máximo das mensagens em MB para este usuário (0 = herdar do domínio | -1 = ilimitado / teto global do servidor)';

@@ -318,6 +318,12 @@ class DomainHandler extends PFAHandler
         db_delete('quota2',                'username',      $this->id, "OR username    $like_domain");
         db_delete('fetchmail',             'mailbox',       $this->id, "OR mailbox     $like_domain");
         db_delete('log',                   'domain',        $this->id); # TODO: should we really delete the log?
+        try {
+            db_delete('totp_exception_address', 'username', $this->id, "OR username $like_domain");
+            db_delete('mailbox_app_password',   'username', $this->id, "OR username $like_domain");
+        } catch (\Throwable $e) {
+            error_log('DomainHandler::delete() optional TOTP/app-password cleanup skipped: ' . $e->getMessage());
+        }
 
         # finally delete the domain
         db_delete($this->db_table, $this->id_field, $this->id);

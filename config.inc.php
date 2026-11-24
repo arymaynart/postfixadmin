@@ -400,11 +400,13 @@ $CONF['mailbox_postcreation_hook ']           = '';
 // Specify your default values below. Quota in MB.
 $CONF['aliases'] = '10';
 $CONF['mailboxes'] = '10';
-$CONF['maxquota'] = '10';
-$CONF['domain_quota_default'] = '2048';
+$CONF['maxquota'] = '10240';
+$CONF['domain_quota_default'] = '204800';
 // Default max message size per domain in MB (0 = Postfix global limit, -1 = unlimited)
 // Enforced when using ADDITIONS/policyd-msgsize
-$CONF['max_domain_msg_mailsize_default'] = '0';
+$CONF['max_domain_msg_mailsize_default'] = '30';
+// Default mailbox quota pre-filled on new mailbox creation (MB, clamped to domain maxquota)
+$CONF['default_mailbox_quota'] = '1024';
 
 // Quota
 // When you want to enforce quota for your mailbox users set this to 'YES'.

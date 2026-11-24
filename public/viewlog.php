@@ -153,8 +153,8 @@ foreach ($tLog as $k => $v) {
         $tLog[$k] = $v;
     }
 }
-//get url
-$url = explode("?",(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]")[0];
+// Build relative path without trusting HTTP_HOST (prevents Host header injection / XSS)
+$url = (string) (parse_url((string) ($_SERVER['REQUEST_URI'] ?? '/viewlog.php'), PHP_URL_PATH) ?: '/viewlog.php');
 
 $smarty->assign('domain_list', $list_domains);
 $smarty->assign('domain_selected', $fDomain);

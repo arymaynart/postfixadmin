@@ -116,6 +116,19 @@ class MailboxHandler extends PFAHandler
         } else {
             $this->struct['quota']['desc'] = Config::lang_f('mb_max', "" . $maxquota);
         }
+
+        if ($this->new) {
+            $def_quota = Config::read('default_mailbox_quota');
+            if ($def_quota !== null && $def_quota !== '' && is_numeric($def_quota) && intval($def_quota) > 0) {
+                $def_mb = intval($def_quota);
+                if ($maxquota > 0 && $def_mb > $maxquota) {
+                    $def_mb = $maxquota;
+                }
+                if ($maxquota >= 0) {
+                    $this->struct['quota']['default'] = $def_mb;
+                }
+            }
+        }
     }
 
     protected function initMsg()
@@ -424,6 +437,12 @@ class MailboxHandler extends PFAHandler
         db_delete('quota', 'username', $this->id);
         db_delete('quota2', 'username', $this->id);
         db_delete('alias', 'address', $this->id);
+        try {
+            db_delete('totp_exception_address', 'username', $this->id);
+            db_delete('mailbox_app_password', 'username', $this->id);
+        } catch (\Throwable $e) {
+            error_log('MailboxHandler::delete() optional TOTP/app-password cleanup skipped: ' . $e->getMessage());
+        }
         db_delete($this->db_table, $this->id_field, $this->id); # finally delete the mailbox
 
         if (!$this->mailbox_postdeletion()) {

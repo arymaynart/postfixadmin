@@ -14,56 +14,77 @@
  *
  * File: sendmail.php
  * Used to send an email to a user.
- * Template File: sendmail.tpl
- *
- * Template Variables:
- *
- * tFrom
- * tSubject
- * tBody
- *
- * Form POST \ GET Variables:
- *
- * fTo
- * fSubject
- * fBody
+ * Hardened: enforces sendmail_all_admins, restricts non-superadmins to managed domains,
+ * sanitizes headers, and supports HTML template + user/domain placeholders.
  */
 
 require_once('common.php');
 
-authentication_require_role('admin');
+if (Config::bool('sendmail_all_admins')) {
+    authentication_require_role('admin');
+} else {
+    authentication_require_role('global-admin');
+}
 
 $CONF = Config::getInstance()->getAll();
 $smarty = PFASmarty::getInstance();
 $PALANG = $CONF['__LANG'];
 
-(($CONF['sendmail'] == 'NO') ? header("Location: main.php") && exit : '1');
+if ($CONF['sendmail'] != 'YES') {
+    header("Location: main.php");
+    exit;
+}
 
 $smtp_from_email = smtp_get_admin_email();
-
+$allowed_domains = list_domains_for_admin(authentication_get_username());
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    if (safepost('token') != ($_SESSION['PFA_token'] ?? '')) {
+    if (!isset($_SESSION['PFA_token']) || !hash_equals((string)$_SESSION['PFA_token'], safepost('token'))) {
         pfa_handle_invalid_token();
     }
 
-    $fTo = safepost('fTo');
+    $fTo = trim(preg_replace('/[\r\n<>]+/', '', safepost('fTo')));
     $fFrom = $smtp_from_email;
-    $fSubject = safepost('fSubject');
-
-    $tBody = $_POST['fBody'];
+    $fSubject = trim(preg_replace('/[\r\n]+/', ' ', safepost('fSubject')));
+    $raw_body = isset($_POST['fBody']) && is_string($_POST['fBody']) ? $_POST['fBody'] : '';
 
     $error = 0;
     $email_check = check_email($fTo);
-    if (empty($fTo) or ($email_check != '')) {
+    $to_domain = '';
+    if (strpos($fTo, '@') !== false) {
+        $parts = explode('@', $fTo);
+        $to_domain = strtolower(trim(end($parts)));
+    }
+
+    if (empty($fTo) || ($email_check != '') || empty($to_domain)) {
         $error = 1;
-        $tTo = escape_string($_POST['fTo']);
-        $tSubject = escape_string($_POST['fSubject']);
-        flash_error($PALANG['pSendmail_to_text_error']); # TODO: superfluous?
-        flash_error($email_check);
+        $tTo = escape_string($fTo);
+        $tSubject = escape_string($fSubject);
+        flash_error($PALANG['pSendmail_to_text_error']);
+        if ($email_check != '') {
+            flash_error($email_check);
+        }
+    } elseif (!authentication_has_role('global-admin') && !in_array($to_domain, $allowed_domains, true)) {
+        $error = 1;
+        $tTo = escape_string($fTo);
+        $tSubject = escape_string($fSubject);
+        flash_error($PALANG['pSendmail_to_text_error']);
     }
 
     if ($error != 1) {
+        $vars = fetch_user_and_domain_vars($fTo);
+        $is_html = (strip_tags($raw_body) !== $raw_body);
+        $filled_fragment = apply_placeholders($raw_body, $vars, $is_html);
+
+        if ($is_html) {
+            $tBody = build_html_from_template($filled_fragment, $fSubject);
+            if ($tBody === false) {
+                $tBody = $filled_fragment;
+            }
+        } else {
+            $tBody = $filled_fragment;
+        }
+
         if (!smtp_mail($fTo, $fFrom, $fSubject, smtp_get_admin_password(), $tBody)) {
             flash_error(Config::lang_f('pSendmail_result_error', $fTo));
         } else {
@@ -71,6 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         }
     }
 }
+
 $smarty->assign('smtp_from_email', $smtp_from_email);
 $smarty->assign('smarty_template', 'sendmail');
 $smarty->display('index.tpl');

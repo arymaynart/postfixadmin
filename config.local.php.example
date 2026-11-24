@@ -1,0 +1,98 @@
+<?php
+/**
+ * PostfixAdmin 4.0.x — Production Local Configuration Template
+ *
+ * Copy to /var/www/postfixadmin/config.local.php and restrict permissions:
+ *   chown root:www-data /var/www/postfixadmin/config.local.php
+ *   chmod 0640 /var/www/postfixadmin/config.local.php
+ *
+ * NEVER commit config.local.php to Git!
+ */
+
+$CONF['configured'] = true;
+
+// Generate a new bcrypt hash via /setup on first deploy
+// (Note: PostfixAdmin 4.0.x rejects legacy 3.2 salted-SHA1 hashes)
+$CONF['setup_password'] = 'CHANGE_ME_GENERATE_IN_SETUP_PHP';
+
+// Language
+$CONF['default_language'] = 'pt-br';
+
+// Clean URLs (Front Controller Router - requires Nginx/Apache rewrite to /router.php)
+$CONF['clean_urls'] = 'YES';
+$CONF['base_url_path'] = '';
+// Canonical public URL (REQUIRED in PostfixAdmin 4.0.7+ when password recovery is enabled)
+$CONF['site_url'] = 'https://mailadmin.example.com';
+
+// Database credentials
+$CONF['database_type']     = 'mysqli';
+$CONF['database_host']     = 'localhost';
+$CONF['database_user']     = 'CHANGE_ME_DB_USER';
+$CONF['database_password'] = 'CHANGE_ME_DB_PASSWORD';
+$CONF['database_name']     = 'CHANGE_ME_DB_NAME';
+
+// Password hashing (Dovecot ARGON2I)
+$CONF['encrypt']   = 'dovecot:ARGON2I';
+$CONF['dovecotpw'] = '/usr/bin/doveadm pw -r 5';
+
+// Outgoing SMTP credentials (used for welcome mails, sendmail, broadcast, password reset)
+$CONF['admin_email']         = 'noreply@example.com';
+$CONF['admin_smtp_password'] = 'CHANGE_ME_SMTP_PASSWORD';
+$CONF['admin_name']          = 'Postmaster';
+$CONF['smtp_server']         = 'mail.example.com';
+$CONF['smtp_port']           = '587';
+$CONF['smtp_type']           = 'starttls';
+$CONF['smtp_client']         = 'mail.example.com';
+
+// Listing & Default Quotas / Message Size Limits (MB)
+$CONF['page_size']                       = '150';
+$CONF['aliases']                         = '20';
+$CONF['mailboxes']                       = '20';
+$CONF['maxquota']                        = '10240';
+$CONF['domain_quota_default']            = '204800';
+$CONF['max_domain_msg_mailsize_default'] = '30';
+$CONF['default_mailbox_quota']           = '1024';
+
+$CONF['quota']            = 'YES';
+$CONF['domain_quota']     = 'YES';
+$CONF['quota_multiplier'] = '1024000';
+$CONF['used_quotas']      = 'YES';
+$CONF['new_quota_table']  = 'YES';
+
+// Aliases & Domain features
+$CONF['domain_path']           = 'YES';
+$CONF['domain_in_mailbox']     = 'NO';
+$CONF['alias_control']         = 'YES';
+$CONF['alias_control_admin']   = 'YES';
+$CONF['alias_domain']          = 'YES';
+$CONF['show_status']           = 'YES';
+$CONF['show_status_key']       = 'YES';
+$CONF['show_undeliverable']    = 'YES';
+$CONF['show_popimap']          = 'YES';
+$CONF['emailcheck_resolve_domain'] = 'NO';
+
+// Security & Mail tools
+$CONF['backup']                        = 'NO';
+$CONF['sendmail']                      = 'YES';
+$CONF['sendmail_all_admins']           = 'NO';
+$CONF['logging']                       = 'YES';
+$CONF['fetchmail']                     = 'YES';
+$CONF['fetchmail_extra_options']       = 'NO';
+$CONF['forgotten_user_password_reset'] = true;
+$CONF['forgotten_admin_password_reset']= false;
+$CONF['xmlrpc_enabled']                = false;
+
+// Postfix/Dovecot/mail-sync integration hooks (always use absolute paths)
+$CONF['mailbox_postdeletion_script'] = 'sudo -u vmail /usr/local/bin/postfixadmin-mailbox-postdeletion.sh';
+$CONF['domain_postcreation_script']  = '/usr/bin/php /opt/mail-sync/hooks/domain_created.php';
+$CONF['domain_postdeletion_script']  = '/usr/bin/php /opt/mail-sync/hooks/domain_deleted.php';
+
+// Branding / Footer / Welcome text
+$CONF['show_footer_text'] = 'YES';
+$CONF['footer_text']      = 'Clique aqui para obter suporte';
+$CONF['footer_link']      = 'https://example.com/suporte';
+$CONF['welcome_text']     = <<<EOM
+Olá,
+
+Bem-vindo(a) à sua nova conta de e-mail.
+EOM;
