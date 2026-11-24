@@ -808,6 +808,16 @@ $CONF['version'] = '4.0.7';
 // in your Dovecot SQL configuration.
 $CONF['smtp_active_flag'] = 'NO';
 
+// Clean URLs (Front Controller Routing)
+// When set to 'YES', PostfixAdmin generates and redirects to extensionless routes
+// (e.g. /login, /list/domain, /edit/mailbox, /virtual, /users/login) served via
+// public/router.php. Requires web server rewrite rules (see DOCUMENTS/CLEAN_URLS.md).
+// Default is 'NO' for 100% backwards compatibility with direct *.php URLs.
+$CONF['clean_urls'] = 'NO';
+// Optional subdirectory prefix if PostfixAdmin is not hosted at the web root
+// (e.g. '/postfixadmin'). Leave empty when hosted on a dedicated vhost root.
+$CONF['base_url_path'] = '';
+
 // If you want to keep most settings at default values and/or want to ensure
 // that future updates work without problems, you can use a separate config 
 // file (config.local.php) instead of editing this file and override some
