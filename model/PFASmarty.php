@@ -79,6 +79,11 @@ class PFASmarty
     {
         $CONF = Config::getInstance()->getAll();
 
+        if (Config::bool('clean_urls')) {
+            $base = Router::normalizeBasePath(Config::read_string('base_url_path'));
+            $rel_path = $base . '/';
+        }
+
         // see: https://github.com/postfixadmin/postfixadmin/issues/410
         // ignore $CONF['theme_css'] if it points to css/default.css and we have css/bootstrap.css.
         if ($CONF['theme_css'] == 'css/default.css' && is_file(__DIR__ . '/../public/css/bootstrap.css')) {
@@ -141,6 +146,9 @@ class PFASmarty
         header("Content-Type: text/html; charset=UTF-8");
 
         $this->template->setConfigDir(__DIR__ . '/../configs');
+        if (Config::bool('clean_urls')) {
+            $this->template->registerFilter('output', [Router::class, 'smartyOutputFilter']);
+        }
         $this->template->display($template);
 
         unset($_SESSION['flash']); # cleanup flash messages

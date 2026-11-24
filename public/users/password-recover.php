@@ -44,13 +44,29 @@ if ($context === 'admin' && !Config::read('forgotten_admin_password_reset') ||
     die('Password reset is disabled by configuration option: forgotten_admin_password_reset or mailbox_postpassword_script');
 }
 
-function sendCodebyEmail($to, $username, $code)
+function sendCodebyEmail($to, $username, $code, string $context = 'users')
 {
     try {
-        $url = getPasswordRecoverySiteUrl() . 'password-change.php?username=' . urlencode($username) . '&code=' . $code;
+        $siteUrl = getPasswordRecoverySiteUrl();
     } catch (RuntimeException $e) {
         error_log(__FILE__ . ' - ' . $e->getMessage());
         return false;
+    }
+
+    if (Config::bool('clean_urls')) {
+        $parts = parse_url($siteUrl);
+        $origin = $parts['scheme'] . '://' . $parts['host'] . (isset($parts['port']) ? ':' . $parts['port'] : '');
+        $basePath = Config::read_string('base_url_path');
+        if ($basePath === '' && !empty($parts['path']) && $parts['path'] !== '/') {
+            $basePath = $parts['path'];
+        }
+        $url = $origin . Router::url(
+            'password-change.php?username=' . urlencode($username) . '&code=' . urlencode($code),
+            $context === 'users',
+            $basePath
+        );
+    } else {
+        $url = $siteUrl . 'password-change.php?username=' . urlencode($username) . '&code=' . urlencode($code);
     }
 
     return smtp_mail($to,
@@ -97,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         $phone = isset($row['phone']) ? trim($row['phone']) : null;
 
         if ($email_other) {
-            sendCodeByEmail($email_other, $tUsername, $token);
+            sendCodeByEmail($email_other, $tUsername, $token, $context);
         } elseif ($phone) {
             sendCodeBySMS($phone, $tUsername, $token);
         } else {
