@@ -75,6 +75,11 @@ class DomainHandler extends PFAHandler
             $domain_quota_default = -1;
         }
 
+        $max_domain_msg_default = Config::read('max_domain_msg_mailsize_default');
+        if ($max_domain_msg_default === null || $max_domain_msg_default === '') {
+            $max_domain_msg_default = 0;
+        }
+
         $this->struct = array(
             # field name                allow       display in...   type    $PALANG label                    $PALANG description                 default / options / ...
             #                           editing?    form    list
@@ -109,6 +114,7 @@ class DomainHandler extends PFAHandler
                 array('select' => db_quota_percent('__mailbox_count', 'mailboxes', '_mailboxes_quot_percent'))),
 
            'maxquota'          => self::pacol($editquota,$editquota,$quota, 'num', 'pOverview_get_quota'          , 'pAdminEdit_domain_maxquota_text'  , Config::read('maxquota')),
+           'max_domain_msg_mailsize' => self::pacol($editquota, $editquota, $quota, 'int', 'pEdit_domain_max_msg_mailsize', 'pEdit_domain_max_msg_mailsize_desc', (int)$max_domain_msg_default),
 
             # Domain quota
             'quota'            => self::pacol($edit_dom_q,$edit_dom_q, 0, 'num',  'pAdminEdit_domain_quota'      , 'pAdminEdit_domain_maxquota_text'  , $domain_quota_default),
@@ -174,14 +180,60 @@ class DomainHandler extends PFAHandler
     }
 
 
+    protected function _validate_max_domain_msg_mailsize($field, $val)
+    {
+        if ($val === '' || $val === null) {
+            return true;
+        }
+        $mb = intval($val);
+        if ($mb < -1 || $mb > 102400) {
+            $this->errormsg[$field] = Config::Lang_f('must_be_numeric', $field);
+            return false;
+        }
+        return true;
+    }
+
+    protected function read_from_db_postprocess($db_result)
+    {
+        foreach ($db_result as $key => $row) {
+            if (isset($row['max_domain_msg_mailsize'])) {
+                $db_result[$key]['max_domain_msg_mailsize_bytes'] = $row['max_domain_msg_mailsize'];
+                $db_result[$key]['max_domain_msg_mailsize'] = divide_quota((int)$row['max_domain_msg_mailsize']);
+            }
+        }
+        return $db_result;
+    }
+
     protected function preSave(): bool
     {
         # TODO: is this function superfluous? _can_edit should already cover this
-        if ($this->is_superadmin) {
-            return true;
+        if (!$this->is_superadmin) {
+            $this->errormsg[] = Config::Lang_f('edit_not_allowed', $this->id);
+            return false;
         }
-        $this->errormsg[] = Config::Lang_f('edit_not_allowed', $this->id);
-        return false;
+
+        // Convert max_domain_msg_mailsize (MB -> bytes; -1 = unlimited, 0 = global Postfix limit)
+        if (isset($this->values['max_domain_msg_mailsize'])) {
+            $raw = $this->values['max_domain_msg_mailsize'];
+            $mult = intval(Config::read_string('quota_multiplier'));
+            if ($mult <= 0) {
+                $mult = 1024 * 1024;
+            }
+            if ($raw === '' || $raw === null) {
+                $this->values['max_domain_msg_mailsize'] = 0;
+            } else {
+                $mb = intval($raw);
+                if ($mb === -1) {
+                    $this->values['max_domain_msg_mailsize'] = -1;
+                } elseif ($mb > 0) {
+                    $this->values['max_domain_msg_mailsize'] = $mb * $mult;
+                } else {
+                    $this->values['max_domain_msg_mailsize'] = 0;
+                }
+            }
+        }
+
+        return true;
     }
 
     /**

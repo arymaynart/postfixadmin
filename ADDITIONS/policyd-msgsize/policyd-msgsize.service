@@ -1,0 +1,28 @@
+[Unit]
+Description=Postfix Message Size Policy Daemon (PostfixAdmin DB)
+After=network.target mysql.service mariadb.service
+Wants=mysql.service
+
+[Service]
+Type=simple
+User=policyd-msgsize
+Group=policyd-msgsize
+EnvironmentFile=-/etc/policyd-msgsize.env
+ExecStart=/opt/policyd-msgsize/venv/bin/python3 /usr/local/bin/policyd_msgsize.py
+Restart=on-failure
+RestartSec=2s
+UMask=0077
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+LockPersonality=yes
+RestrictAddressFamilies=AF_INET AF_UNIX
+AmbientCapabilities=
+
+[Install]
+WantedBy=multi-user.target
