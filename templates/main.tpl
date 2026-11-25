@@ -2,6 +2,7 @@
 <div class="panel panel-default" id="main_menu">
 
     <section class="pfa-main-section">
+        <img class="pfa-brand-zigzag" src="{$rel_path}images/brand/zigue-zague-laranja.svg" alt="" aria-hidden="true"/>
         <h2>{$PALANG.pMain_global_search}</h2>
         <form method=GET class=form action="">
             <div class="input-group">
@@ -16,10 +17,10 @@
 
 
         {if !empty($domains)}
-            <h3>Domains</h3>
+            <h3>{$PALANG.pAdminMenu_domain}</h3>
             <ul>
                 {foreach from=$domains item=row}
-                    <li>Domain: <a
+                    <li>{$PALANG.domain}: <a
                                 href="list-virtual.php?domain={$row['domain']|escape:url}">{$row['domain']}</a>
                     </li>
                 {/foreach}
@@ -27,10 +28,10 @@
         {/if}
 
         {if !empty($mailboxes)}
-            <h3>Mailboxes</h3>
+            <h3>{$PALANG.mailboxes}</h3>
             <ul>
                 {foreach from=$mailboxes item=row}
-                    <li>Mailbox: <a
+                    <li>{$PALANG.pOverview_mailbox_username}: <a
                                 href="edit.php?table=mailbox&edit={$row['username']|escape:url}">{$row['username']}</a>
                     </li>
                 {/foreach}
@@ -39,7 +40,7 @@
 
 
         {if !empty($aliases)}
-            <h3>Aliases</h3>
+            <h3>{$PALANG.aliases}</h3>
             <ul>
                 {foreach from=$aliases item=row}
                     <li>Alias: <a
@@ -51,6 +52,7 @@
     </section>
 
     <section class="pfa-main-section">
+        <img class="pfa-brand-zigzag" src="{$rel_path}images/brand/zigue-zague-laranja.svg" alt="" aria-hidden="true"/>
         <h2>{$PALANG.pMain_dashboard}</h2>
         <table class="table">
             <tr>

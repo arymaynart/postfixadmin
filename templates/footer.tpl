@@ -1,27 +1,23 @@
 <!-- {$smarty.template} -->
 <footer class="footer">
-    <div class="container text-center">
-        {if !isset($smarty.session.sessid.username)}
-            {* see: https://github.com/postfixadmin/postfixadmin/issues/517 - only expose version number if logged in *}
-            <a target="_blank" rel="noopener" href="https://github.com/postfixadmin/postfixadmin/">PostfixAdmin</a>
-        {else}
-            <a target="_blank" rel="noopener" href="https://github.com/postfixadmin/postfixadmin/">Postfix
-                Admin {$version}</a>
-            <span id="update-check">&nbsp;|&nbsp;
-                <a target="_blank" rel="noopener"
-                   href="https://github.com/postfixadmin/postfixadmin/releases">{$PALANG.check_update}</a>
+    <div class="container">
+        <div class="pfa-footer-inner">
+            <span class="pfa-footer-brand">
+                <img class="pfa-footer-logo-pos" src="{$rel_path}images/brand/martdesign-positivo-horizontal.svg" alt="mARTdesign"/>
+                <img class="pfa-footer-logo-neg" src="{$rel_path}images/brand/martdesign-negativo-horizontal.svg" alt="mARTdesign"/>
             </span>
-            {if isset($smarty.session.sessid)}
-                {if $smarty.session.sessid.username}
-                    &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-                    {$PALANG.pFooter_logged_as|replace:"%s":$smarty.session.sessid.username}
+            <div class="pfa-footer-meta">
+                {if isset($smarty.session.sessid.username) && $smarty.session.sessid.username}
+                    <span>{$PALANG.pFooter_logged_as|replace:"%s":$smarty.session.sessid.username}</span>
+                {else}
+                    <span>Serviço de E-mail</span>
                 {/if}
-            {/if}
-        {/if}
-        {if $CONF.show_footer_text == 'YES' && $CONF.footer_link}
-            &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-            <a href="{$CONF.footer_link}" rel="noopener">{$CONF.footer_text}</a>
-        {/if}
+                {if $CONF.show_footer_text == 'YES' && $CONF.footer_link}
+                    <span class="pfa-footer-sep">·</span>
+                    <a href="{$CONF.footer_link}" target="_blank" rel="noopener">{$CONF.footer_text} →</a>
+                {/if}
+            </div>
+        </div>
     </div>
 </footer>
 </body>

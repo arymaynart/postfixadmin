@@ -8,10 +8,9 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            {*** <a class="navbar-brand" href='main.php'><img id="login_header_logo" src="{$CONF.theme_logo}" alt="Logo" /></a> ***}
             <a class="navbar-brand" href="{#url_user_main#}"><img id="login_header_logo"
-                                                                                   src="{$CONF.theme_logo|default:'../images/postbox.png'}"
-                                                                                   alt="Logo"/></a>
+                                                                                   src="{$CONF.theme_logo|default:'../images/brand/martdesign-negativo-horizontal.svg'}"
+                                                                                   alt="mARTdesign"/></a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
@@ -43,6 +42,16 @@
                 {/if}
 
                 <li class="logout"><a class="btn navbar-btn" target="_top" href="{#url_user_logout#}">{$PALANG.pMenu_logout}</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <button type="button" class="pfa-theme-toggle" onclick="pfaToggleTheme()" title="Alternar tema Carbono / Creme" aria-label="Alternar tema Carbono / Creme">
+                        <svg class="pfa-icon pfa-theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+                        <svg class="pfa-icon pfa-theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+                        <span class="pfa-theme-label-carbono">Carbono</span>
+                        <span class="pfa-theme-label-creme">Creme</span>
+                    </button>
+                </li>
             </ul>
         </div>
     </div>
