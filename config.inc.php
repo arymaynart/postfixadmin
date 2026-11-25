@@ -776,7 +776,7 @@ $CONF['theme_logo'] = 'images/logo-default.png';
 $CONF['theme_css'] = 'css/bootstrap.css';
 // If you want to customize some styles without editing the $CONF['theme_css'] file,
 // you can add a custom CSS file. It will be included after $CONF['theme_css'].
-$CONF['theme_custom_css'] = '';
+$CONF['theme_custom_css'] = 'css/custom-ui.css';
 
 // XMLRPC Interface.
 // This should be only of use if you wish to use e.g the

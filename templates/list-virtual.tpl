@@ -27,7 +27,7 @@
         </div>
         <hr/>
         <div class="row">
-            <div class="col-md-12 text-center">{$PALANG.show}
+            <div class="col-md-12 text-center pfa-tab-bar"><span>{$PALANG.show}</span>
                 {if isset($search._)}
                     {assign var="searchsuffix" value="&search[_]={$search._}"}
                 {else}
@@ -78,6 +78,7 @@
         {assign var="colspan" value=9}
         {if $CONF.vacation_control_admin===YES}{assign var="colspan" value="`$colspan+1`"}{/if}
         {if $CONF.alias_control_admin===YES}{assign var="colspan" value="`$colspan+1`"}{/if}
+        <div class="table-responsive">
         <table class="table table-hover" id="mailbox_table">
             <thead>
             <tr>
@@ -88,6 +89,7 @@
             {include file="list-virtual_mailbox.tpl"}
             {else}</table>
         {/if}
+        </div>
         <div class="panel-footer">
             <div class="btn-toolbar" role="toolbar">
                 <div class="btn-group pull-right">
