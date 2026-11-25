@@ -1096,24 +1096,29 @@ select[multiple].form-control {
 }
 
 /* ----------------------------------------------------------------------------
- * 10. Clean MartFlow Quota Pills
+ * 10. Clean MartFlow Quota Pills (strong fill visibility in Creme & Carbono)
  * ---------------------------------------------------------------------------- */
 .quota_bar {
   position: relative;
   display: inline-block;
   box-sizing: border-box;
-  min-width: 94px;
-  max-width: 130px;
+  min-width: 96px;
+  max-width: 132px;
   width: 100%;
   height: 24px;
   overflow: hidden;
-  background-color: var(--mf-table-head);
-  border: 1px solid var(--mf-border-subtle);
+  background-color: #ebe7da;
+  border: 1px solid var(--mf-border);
   border-radius: 8px;
   line-height: 22px;
   text-align: center;
   vertical-align: middle;
   white-space: nowrap;
+}
+
+[data-theme="carbono"] .quota_bar {
+  background-color: #141414;
+  border-color: #2a2a2a;
 }
 
 .quota_fill {
@@ -1127,9 +1132,13 @@ select[multiple].form-control {
   transition: width 200ms ease;
 }
 
-.quota_low { background-color: var(--mf-green-soft) !important; border-right: 2px solid var(--mf-green); }
-.quota_mid { background-color: var(--mf-amber-soft) !important; border-right: 2px solid var(--mf-amber); }
-.quota_high { background-color: var(--mf-red-soft) !important; border-right: 2px solid var(--mf-red); }
+.quota_low { background-color: rgba(22, 163, 74, 0.34) !important; border-right: 2px solid var(--mf-green); }
+.quota_mid { background-color: rgba(217, 119, 6, 0.36) !important; border-right: 2px solid var(--mf-amber); }
+.quota_high { background-color: rgba(220, 38, 38, 0.34) !important; border-right: 2px solid var(--mf-red); }
+
+[data-theme="carbono"] .quota_low { background-color: rgba(34, 197, 94, 0.34) !important; }
+[data-theme="carbono"] .quota_mid { background-color: rgba(245, 158, 11, 0.36) !important; }
+[data-theme="carbono"] .quota_high { background-color: rgba(239, 68, 68, 0.38) !important; }
 
 .quota_label {
   position: relative;
@@ -1144,9 +1153,13 @@ select[multiple].form-control {
   cursor: default;
 }
 
-.quota_text_low { color: var(--mf-green-text) !important; }
-.quota_text_mid { color: var(--mf-amber-text) !important; }
-.quota_text_high { color: var(--mf-red-text) !important; }
+.quota_text_low { color: #14532d !important; }
+.quota_text_mid { color: #78350f !important; }
+.quota_text_high { color: #7f1d1d !important; }
+
+[data-theme="carbono"] .quota_text_low { color: #dcfce7 !important; }
+[data-theme="carbono"] .quota_text_mid { color: #fef3c7 !important; }
+[data-theme="carbono"] .quota_text_high { color: #fee2e2 !important; }
 
 .quota_no_border {
   min-width: 0;
@@ -1535,11 +1548,34 @@ div#login label {
   margin-bottom: 6px;
 }
 
-div#login .form-control {
+div#login .form-control,
+div#login select,
+div#login select.flat {
+  display: block;
+  width: 100%;
   background-color: #0d0d0d;
-  border-color: #2a2a2a;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px !important;
   color: #fcf9e0;
   height: 44px;
+  padding: 9px 14px;
+  font-family: var(--mf-font-sans);
+  font-size: 13.5px;
+  box-shadow: none !important;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+div#login select:focus,
+div#login select.flat:focus {
+  border-color: var(--mf-accent) !important;
+  box-shadow: 0 0 0 2px rgba(245, 71, 31, 0.22) !important;
+  outline: none;
+}
+
+div#login select option,
+[data-theme="carbono"] select option {
+  background-color: #161616;
+  color: #fcf9e0;
 }
 
 div#login .btn-primary.btn-lg {
