@@ -9,8 +9,25 @@
     {* see https://github.com/postfixadmin/postfixadmin/issues/497 *}
     <meta http-equiv='Content-Security-Policy' content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; "/>
 
-    <title>Postfix Admin - {$smarty.server.HTTP_HOST}</title>
+    <title>mARTdesign Mail Admin - {$smarty.server.HTTP_HOST}</title>
+    <link rel="icon" type="image/svg+xml" href="{$CONF.theme_favicon}"/>
     <link rel="shortcut icon" href="{$CONF.theme_favicon}"/>
+    {literal}<script>
+    (function () {
+        try {
+            var saved = localStorage.getItem('pfa_mart_theme');
+            document.documentElement.setAttribute('data-theme', saved === 'carbono' ? 'carbono' : 'creme');
+        } catch (e) {
+            document.documentElement.setAttribute('data-theme', 'creme');
+        }
+    })();
+    function pfaToggleTheme() {
+        var cur = document.documentElement.getAttribute('data-theme') === 'carbono' ? 'carbono' : 'creme';
+        var next = cur === 'carbono' ? 'creme' : 'carbono';
+        document.documentElement.setAttribute('data-theme', next);
+        try { localStorage.setItem('pfa_mart_theme', next); } catch (e) {}
+    }
+    </script>{/literal}
     <link rel="stylesheet" type="text/css" href="{$CONF.theme_css}"/>
     {if $CONF.theme_custom_css}
         <link rel="stylesheet" type="text/css" href="{$CONF.theme_custom_css}"/>

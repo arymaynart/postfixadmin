@@ -1,8 +1,8 @@
 <nav class="navbar navbar-default navbar-fixed-top">
-    <div class="container">
+    <div class="container-fluid">
         <div class="navbar-header">
             <a class="navbar-brand" href='main.php'><img id="login_header_logo" src="{$CONF.theme_logo}"
-                                                         alt="Logo"/></a>
+                                                         alt="mARTdesign"/></a>
             {if $CONF.show_header_text==='YES' && $CONF.header_text}
                 <h2>{$CONF.header_text}</h2>
             {/if}
@@ -12,7 +12,11 @@
 
 <div id="login" class="container">
 
-    <h2 class="h2">{if $logintype=='admin'}{$PALANG.pLogin_welcome}{else}{$PALANG.pUsersLogin_welcome}{/if}</h2>
+    <div class="pfa-login-header">
+        <img class="pfa-brand-zigzag" src="{$rel_path}images/brand/zigue-zague-laranja.svg" alt="" aria-hidden="true"/>
+        <p class="pfa-login-eyebrow">{if $logintype=='admin'}Painel de E-mail · Administração{else}Painel de E-mail · Usuário{/if}</p>
+        <h2 class="h2">{if $logintype=='admin'}{$PALANG.pLogin_welcome}{else}{$PALANG.pUsersLogin_welcome}{/if}</h2>
+    </div>
 
     <div class="well">
 
@@ -45,9 +49,8 @@
             </div>
         </form>
         {if $logintype == 'admin'}
-            <br/>
-            <div class="text-center">
-                <a href="users/">{$PALANG.pLogin_login_users}</a>
+            <div class="pfa-login-alt">
+                <a href="users/">{$PALANG.pLogin_login_users} →</a>
             </div>
         {/if}
     </div>
