@@ -1,0 +1,587 @@
+/* ============================================================================
+ * PostfixAdmin 4.0.x — UI Polish (Minimalist Actions & Responsive Datatables)
+ * Loaded via $CONF['theme_custom_css'] = 'css/custom-ui.css';
+ * 100% self-hosted (zero external fonts/CDNs, CSP default-src 'self' safe).
+ * ============================================================================ */
+
+:root {
+  --pfa-bg: #f6f7f9;
+  --pfa-surface: #ffffff;
+  --pfa-border: #e2e8f0;
+  --pfa-border-strong: #cbd5e1;
+  --pfa-text: #1e293b;
+  --pfa-muted: #64748b;
+  --pfa-th-bg: #f8fafc;
+  --pfa-row-hover: #f8fafc;
+
+  --pfa-green-bg: #dcfce7;
+  --pfa-green-border: #86efac;
+  --pfa-green-fg: #15803d;
+  --pfa-green-solid: #16a34a;
+
+  --pfa-gray-bg: #f1f5f9;
+  --pfa-gray-border: #cbd5e1;
+  --pfa-gray-fg: #64748b;
+  --pfa-gray-solid: #475569;
+
+  --pfa-amber-bg: #fef3c7;
+  --pfa-amber-border: #fcd34d;
+  --pfa-amber-fg: #b45309;
+  --pfa-amber-solid: #d97706;
+
+  --pfa-blue-bg: #dbeafe;
+  --pfa-blue-border: #93c5fd;
+  --pfa-blue-fg: #1d4ed8;
+  --pfa-blue-solid: #2563eb;
+
+  --pfa-red-bg: #fee2e2;
+  --pfa-red-border: #fca5a5;
+  --pfa-red-fg: #b91c1c;
+  --pfa-red-solid: #dc2626;
+
+  --pfa-purple-bg: #ede9fe;
+  --pfa-purple-border: #c4b5fd;
+  --pfa-purple-fg: #6d28d9;
+  --pfa-purple-solid: #7c3aed;
+}
+
+/* ----------------------------------------------------------------------------
+ * Page canvas, wider desktop container & clean panels
+ * ---------------------------------------------------------------------------- */
+body {
+  background-color: var(--pfa-bg);
+  color: var(--pfa-text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+body > .container[role="main"] {
+  width: 96% !important;
+  max-width: 1480px;
+  min-width: 0 !important;
+  padding-top: 78px;
+  padding-bottom: 28px;
+}
+
+.navbar-default {
+  background-color: var(--pfa-surface);
+  border-bottom: 1px solid var(--pfa-border);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.panel {
+  background-color: var(--pfa-surface);
+  border: 1px solid var(--pfa-border);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+  overflow: hidden;
+}
+
+.panel-default > .panel-heading {
+  background-color: var(--pfa-th-bg);
+  border-bottom: 1px solid var(--pfa-border);
+  color: var(--pfa-text);
+  padding: 12px 16px;
+}
+
+.panel-footer {
+  background-color: var(--pfa-th-bg);
+  border-top: 1px solid var(--pfa-border);
+  padding: 10px 16px;
+}
+
+.footer {
+  background-color: var(--pfa-surface);
+  border-top: 1px solid var(--pfa-border);
+  color: var(--pfa-muted);
+}
+
+/* MOTD banner */
+#motd {
+  background-color: #fffbeb;
+  border: 1px solid #fde68a;
+  color: #92400e;
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* ----------------------------------------------------------------------------
+ * Datatables: compact headers, vertical centering, zero forced scroll
+ * ---------------------------------------------------------------------------- */
+#admin_table,
+#mailbox_table,
+#log_table {
+  width: 100%;
+  margin-bottom: 0;
+  font-size: 13px;
+}
+
+#admin_table > thead > tr > th,
+#mailbox_table > thead > tr > th,
+#log_table > thead > tr > th {
+  background-color: var(--pfa-th-bg);
+  color: var(--pfa-muted);
+  font-size: 11.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-bottom: 2px solid var(--pfa-border);
+  border-top: 0;
+  padding: 10px 8px;
+  vertical-align: middle;
+  white-space: normal;
+  line-height: 1.25;
+}
+
+#admin_table > thead > tr:first-child > th[colspan],
+#mailbox_table > thead > tr:first-child > th[colspan] {
+  background-color: var(--pfa-surface);
+  color: var(--pfa-text);
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+  text-align: left !important;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--pfa-border);
+}
+
+#admin_table > tbody > tr > td,
+#mailbox_table > tbody > tr > td,
+#log_table > tbody > tr > td {
+  padding: 8px 8px;
+  vertical-align: middle;
+  border-top: 1px solid var(--pfa-border);
+  color: var(--pfa-text);
+}
+
+#admin_table > tbody > tr:hover > td,
+#mailbox_table > tbody > tr:hover > td,
+#log_table > tbody > tr:hover > td {
+  background-color: var(--pfa-row-hover);
+}
+
+#admin_table td.list-col-domain a,
+#mailbox_table td a:not(.pfa-action-btn):not(.btn) {
+  color: #0f172a;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+#admin_table td.list-col-domain a:hover,
+#mailbox_table td a:not(.pfa-action-btn):not(.btn):hover {
+  color: var(--pfa-blue-solid);
+  text-decoration: underline;
+}
+
+/* Override upstream forced 1240px min-width on domain list */
+.domain-list-scroll {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.domain-list-scroll > #admin_table {
+  min-width: 0 !important;
+  width: 100%;
+}
+
+/* Balanced, compact column sizing for /list/domain */
+#admin_table th.list-col-domain,
+#admin_table td.list-col-domain {
+  min-width: 165px;
+  word-break: break-word;
+}
+
+#admin_table th.list-col-description,
+#admin_table td.list-col-description {
+  min-width: 90px;
+  max-width: 220px;
+  color: var(--pfa-muted);
+}
+
+#admin_table th.list-col-aliases_quot,
+#admin_table td.list-col-aliases_quot,
+#admin_table th.list-col-mailboxes_quot,
+#admin_table td.list-col-mailboxes_quot {
+  width: 108px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+#admin_table th.list-col-total_quot,
+#admin_table td.list-col-total_quot {
+  width: 124px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+#admin_table th.list-col-maxquota,
+#admin_table td.list-col-maxquota,
+#admin_table th.list-col-max_domain_msg_mailsize,
+#admin_table td.list-col-max_domain_msg_mailsize {
+  width: 78px;
+  text-align: center;
+}
+
+#admin_table td.list-col-maxquota,
+#admin_table td.list-col-max_domain_msg_mailsize {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+#admin_table th.list-col-transport,
+#admin_table td.list-col-transport {
+  width: 74px;
+  text-align: center;
+}
+
+#admin_table th.list-col-backupmx,
+#admin_table td.list-col-backupmx {
+  width: 68px;
+  text-align: center;
+}
+
+#admin_table th.list-col-active,
+#admin_table td.list-col-active,
+#mailbox_table th.list-col-active,
+#mailbox_table td.list-col-active {
+  width: 52px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+#admin_table th.list-col-modified,
+#admin_table td.list-col-modified {
+  width: 92px;
+  text-align: center;
+  white-space: nowrap;
+  color: var(--pfa-muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+#admin_table th.list-col-password_expiry,
+#admin_table td.list-col-password_expiry {
+  width: 68px;
+  text-align: center;
+}
+
+/* Keep domain headers wrappable and restore columns on desktop widths */
+.domain-list-scroll > #admin_table th {
+  white-space: normal !important;
+  line-height: 1.25;
+}
+
+@media (max-width: 1300px) {
+  .domain-list-scroll > #admin_table .list-col-modified { display: table-cell; }
+  .domain-list-scroll > #admin_table { min-width: 0 !important; }
+}
+
+@media (max-width: 1200px) {
+  .domain-list-scroll > #admin_table .list-col-backupmx { display: table-cell; }
+  .domain-list-scroll > #admin_table { min-width: 0 !important; }
+}
+
+@media (max-width: 1120px) {
+  .domain-list-scroll > #admin_table .list-col-transport { display: table-cell; }
+  .domain-list-scroll > #admin_table { min-width: 0 !important; }
+}
+
+/* Action cells */
+#admin_table th.list-col-action,
+#admin_table td.list-col-action,
+#mailbox_table th.list-col-action,
+#mailbox_table td.list-col-action {
+  width: 40px;
+  min-width: 40px;
+  padding-left: 4px;
+  padding-right: 4px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+#admin_table td.list-col-action form,
+#mailbox_table td.list-col-action form {
+  display: inline-block;
+  margin: 0;
+}
+
+#mailbox_table td.list-col-spacer {
+  width: 0;
+  padding: 0 !important;
+}
+
+/* ----------------------------------------------------------------------------
+ * Minimalist semantic action icon buttons (inline SVG, Lucide-style)
+ * ---------------------------------------------------------------------------- */
+.pfa-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background-color: transparent;
+  text-decoration: none !important;
+  cursor: pointer;
+  line-height: 1;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, box-shadow 140ms ease;
+}
+
+.pfa-action-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.28);
+}
+
+.pfa-action-btn .pfa-icon {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  display: block;
+  pointer-events: none;
+}
+
+/* Active ON (Habilitado) — Verde */
+.pfa-btn-active-on {
+  background-color: var(--pfa-green-bg);
+  border-color: var(--pfa-green-border);
+  color: var(--pfa-green-fg);
+}
+.pfa-btn-active-on:hover,
+.pfa-btn-active-on:focus {
+  background-color: var(--pfa-green-solid);
+  border-color: var(--pfa-green-fg);
+  color: #ffffff;
+}
+
+/* Active OFF (Desabilitado) — Cinza */
+.pfa-btn-active-off {
+  background-color: var(--pfa-gray-bg);
+  border-color: var(--pfa-gray-border);
+  color: var(--pfa-gray-fg);
+}
+.pfa-btn-active-off:hover,
+.pfa-btn-active-off:focus {
+  background-color: var(--pfa-gray-solid);
+  border-color: var(--pfa-gray-solid);
+  color: #ffffff;
+}
+
+/* Edit (Editar) — Ambar / Amarelo */
+.pfa-btn-edit {
+  background-color: var(--pfa-amber-bg);
+  border-color: var(--pfa-amber-border);
+  color: var(--pfa-amber-fg);
+}
+.pfa-btn-edit:hover,
+.pfa-btn-edit:focus {
+  background-color: var(--pfa-amber-solid);
+  border-color: var(--pfa-amber-fg);
+  color: #ffffff;
+}
+
+/* Alias (Encaminhamento) — Azul */
+.pfa-btn-alias {
+  background-color: var(--pfa-blue-bg);
+  border-color: var(--pfa-blue-border);
+  color: var(--pfa-blue-fg);
+}
+.pfa-btn-alias:hover,
+.pfa-btn-alias:focus {
+  background-color: var(--pfa-blue-solid);
+  border-color: var(--pfa-blue-fg);
+  color: #ffffff;
+}
+
+/* Delete (Excluir) — Vermelho */
+.pfa-btn-delete {
+  background-color: var(--pfa-red-bg);
+  border-color: var(--pfa-red-border);
+  color: var(--pfa-red-fg);
+}
+.pfa-btn-delete:hover,
+.pfa-btn-delete:focus {
+  background-color: var(--pfa-red-solid);
+  border-color: var(--pfa-red-fg);
+  color: #ffffff;
+}
+
+/* Vacation (Ferias) — Roxo quando ativo / Cinza quando inativo */
+.pfa-btn-vacation-on {
+  background-color: var(--pfa-purple-bg);
+  border-color: var(--pfa-purple-border);
+  color: var(--pfa-purple-fg);
+}
+.pfa-btn-vacation-on:hover,
+.pfa-btn-vacation-on:focus {
+  background-color: var(--pfa-purple-solid);
+  border-color: var(--pfa-purple-fg);
+  color: #ffffff;
+}
+
+.pfa-btn-vacation-off {
+  background-color: var(--pfa-gray-bg);
+  border-color: var(--pfa-gray-border);
+  color: var(--pfa-gray-fg);
+}
+.pfa-btn-vacation-off:hover,
+.pfa-btn-vacation-off:focus {
+  background-color: var(--pfa-gray-solid);
+  border-color: var(--pfa-gray-solid);
+  color: #ffffff;
+}
+
+/* ----------------------------------------------------------------------------
+ * Modern quota bars (replaces legacy quota-colors.png sprite)
+ * ---------------------------------------------------------------------------- */
+.quota_bar {
+  position: relative;
+  display: inline-block;
+  box-sizing: border-box;
+  min-width: 96px;
+  max-width: 132px;
+  width: 100%;
+  height: 20px;
+  overflow: hidden;
+  background-color: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  line-height: 18px;
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.quota_fill {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  max-width: 100%;
+  background-image: none !important;
+  transition: width 200ms ease;
+}
+
+.quota_low {
+  background-color: #bbf7d0 !important;
+}
+
+.quota_mid {
+  background-color: #fde68a !important;
+}
+
+.quota_high {
+  background-color: #fecaca !important;
+}
+
+.quota_label {
+  position: relative;
+  z-index: 2;
+  display: block;
+  height: 18px;
+  padding: 0 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: #1e293b;
+  cursor: default;
+}
+
+.quota_text_low {
+  color: #14532d !important;
+}
+
+.quota_text_mid {
+  color: #78350f !important;
+}
+
+.quota_text_high {
+  color: #7f1d1d !important;
+}
+
+.quota_no_border {
+  min-width: 0;
+  width: auto;
+  height: auto;
+  background: transparent;
+  border: none;
+  line-height: 1.4;
+}
+
+.quota_no_border .quota_label {
+  height: auto;
+  padding: 0;
+  color: var(--pfa-muted);
+  font-weight: 500;
+}
+
+/* ----------------------------------------------------------------------------
+ * Virtual overview tab bar & viewlog pagination polish
+ * ---------------------------------------------------------------------------- */
+.pfa-tab-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.pfa-tab-bar a,
+.pfa-tab-bar span.active {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: background-color 140ms ease, color 140ms ease;
+}
+
+.pfa-tab-bar a {
+  color: var(--pfa-muted);
+  background-color: var(--pfa-gray-bg);
+}
+
+.pfa-tab-bar a:hover {
+  color: var(--pfa-text);
+  background-color: #e2e8f0;
+}
+
+.pfa-tab-bar span.active {
+  color: var(--pfa-blue-fg);
+  background-color: var(--pfa-blue-bg);
+  border-color: var(--pfa-blue-border);
+  font-weight: 600;
+}
+
+/* Fix Bootstrap 4 .btn-secondary class used in viewlog.tpl under Bootstrap 3 */
+.btn-secondary {
+  color: var(--pfa-text);
+  background-color: var(--pfa-surface);
+  border-color: var(--pfa-border-strong);
+}
+
+.btn-secondary:hover,
+.btn-secondary:focus {
+  color: var(--pfa-text);
+  background-color: var(--pfa-gray-bg);
+  border-color: #94a3b8;
+}
+
+/* Table responsive wrapper inside panels */
+.panel > .table-responsive {
+  border: 0;
+  margin-bottom: 0;
+}

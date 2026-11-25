@@ -100,12 +100,12 @@
                 *}
                 {elseif $key == 'active'}
                 {if $item._can_edit}
-                    <a class="btn btn-{if ($item.active==0)}info{else}warning{/if} list-action-icon" title="{$field.label}: {$item._active}" aria-label="{$field.label}: {$item._active}"
+                    <a class="pfa-action-btn {if ($item.active==0)}pfa-btn-active-off{else}pfa-btn-active-on{/if}" title="{$field.label}: {$item._active}" aria-label="{$field.label}: {$item._active}"
                        href="{#url_editactive#}{$table}&amp;id={$RAW_item.$id_field|escape:"url"}&amp;active={if ($item.active==0)}1{else}0{/if}&amp;token={$smarty.session.PFA_token|escape:"url"}">
                         {if $item._active == $PALANG['YES']}
-                            <span class="glyphicon glyphicon-check" aria-hidden="true"></span>
+                            <svg class="pfa-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg>
                         {else}
-                            <span class="glyphicon glyphicon-unchecked" aria-hidden="true"></span>
+                            <svg class="pfa-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><line x1="6" y1="18" x2="18" y2="6"/></svg>
                         {/if}
                     </a>
                 {else}
@@ -149,9 +149,10 @@
 {/foreach}
 
 <td class="list-col-action">{if $item._can_edit}
-        <a class="btn btn-primary list-action-icon" title="{$PALANG.edit}" aria-label="{$PALANG.edit}"
-           href="edit.php?table={$table|escape:"url"}&amp;edit={$RAW_item.$id_field|escape:"url"}"><span
-                    class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+        <a class="pfa-action-btn pfa-btn-edit" title="{$PALANG.edit}" aria-label="{$PALANG.edit}"
+           href="edit.php?table={$table|escape:"url"}&amp;edit={$RAW_item.$id_field|escape:"url"}">
+            <svg class="pfa-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+        </a>
     {else}&nbsp;
     {/if}
 </td>
@@ -161,9 +162,9 @@
             <input type="hidden" name="delete" value="{$item.$id_field}">
             <input type="hidden" name="token" value="{$smarty.session.PFA_token|escape:"quotes"}">
 
-            <button class="btn btn-danger list-action-icon" title="{$PALANG.del}" aria-label="{$PALANG.del}"
+            <button class="pfa-action-btn pfa-btn-delete" title="{$PALANG.del}" aria-label="{$PALANG.del}"
                     onclick="return confirm('{$PALANG.{$msg.confirm_delete}|replace:'%s':{$RAW_item.$id_field|escape:'javascript'|escape:'html'}}')">
-                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                <svg class="pfa-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
             </button>
         </form>
     {else}&nbsp;{/if}
