@@ -1,8 +1,9 @@
-<nav class="navbar navbar-default navbar-fixed-top">
+<nav class="navbar navbar-default navbar-fixed-top mf-topbar">
     <div class="container-fluid">
         <div class="navbar-header">
-            <a class="navbar-brand" href='main.php'><img id="login_header_logo" src="{$CONF.theme_logo}"
-                                                         alt="mARTdesign"/></a>
+            <a class="navbar-brand" href='main.php'>
+                <img class="mf-logo-neg" src="{$rel_path}images/brand/martdesign-negativo-horizontal.svg" alt="mARTdesign"/>
+            </a>
             {if $CONF.show_header_text==='YES' && $CONF.header_text}
                 <h2>{$CONF.header_text}</h2>
             {/if}

@@ -2,7 +2,7 @@
 {strip}
     {if isset($smarty.session.flash)}
         {if isset($smarty.session.flash.info)}
-            <div class="alert alert-info" role="alert">
+            <div class="mf-flash-success" role="alert">
                 <ul class="flash-info">
                     {foreach from=$smarty.session.flash.info item=msg}
                         <li>{$msg|escape:html}</li>
@@ -11,7 +11,7 @@
             </div>
         {/if}
         {if isset($smarty.session.flash.error)}
-            <div class="alert alert-danger" role="alert">
+            <div class="mf-flash-error" role="alert">
                 <ul class="flash-error">
                     {foreach from=$smarty.session.flash.error item=msg}
                         <li>{$msg|escape:html}</li>
