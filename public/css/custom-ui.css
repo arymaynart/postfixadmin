@@ -1,15 +1,34 @@
 /* ============================================================================
- * mARTdesign Design System for PostfixAdmin 4.0.x
+ * MartFlow / mARTdesign Interface for PostfixAdmin 4.0.x
  * ----------------------------------------------------------------------------
- * Based strictly on mARTdesign tokens (Carbono & Creme), typography (Comfortaa
- * + Inter self-hosted), sharp web geometry (0px surfaces / 4px form inputs),
- * flat solid colors (zero gradients), and official SVG brand assets.
- * 100% self-hosted — fully compatible with CSP default-src 'self'.
+ * Full-bleed workspace architecture ported from MartFlow (Creme & Carbono):
+ *   - Edge-to-edge topbar (h-14) + full-bleed page header + clean workspace
+ *   - No redundant nested Bootstrap cards
+ *   - Self-hosted Inter (300..800) & Comfortaa (300..700) — CSP 'self' safe
+ *   - Official mARTdesign SVG logos & Carbono quadrant pattern on login
  * ============================================================================ */
 
 /* ----------------------------------------------------------------------------
- * 1. Self-hosted typography (Comfortaa 300..700, Inter 300..700 — never 800)
+ * 1. Self-hosted Typography (Inter 300..800 + Comfortaa 300..700)
  * ---------------------------------------------------------------------------- */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 300 800;
+  font-display: swap;
+  src: url("../fonts/inter-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 300 800;
+  font-display: swap;
+  src: url("../fonts/inter-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 @font-face {
   font-family: "Comfortaa";
   font-style: normal;
@@ -28,175 +47,132 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-@font-face {
-  font-family: "Inter";
-  font-style: normal;
-  font-weight: 300 700;
-  font-display: swap;
-  src: url("../fonts/inter-latin-ext.woff2") format("woff2");
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-
-@font-face {
-  font-family: "Inter";
-  font-style: normal;
-  font-weight: 300 700;
-  font-display: swap;
-  src: url("../fonts/inter-latin.woff2") format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-
 /* ----------------------------------------------------------------------------
- * 2. Official mARTdesign design tokens (Creme default for tables + Carbono)
+ * 2. MartFlow Palette Tokens (Creme Light + Carbono Deep Dark)
  * ---------------------------------------------------------------------------- */
 :root,
 [data-theme="creme"] {
-  --page: #eceae0;
-  --panel: #dedad0;
-  --card: #ffffff;
-  --inset: #f3f0e4;
-  --skeleton: #d4cfbf;
-  --skeleton-strong: #bfbcb0;
-  --ink: #1a1a1a;
-  --body: #5a5040;
-  --border: #e8e4d8;
-  --border-strong: #d4cfbf;
-  --dashed: #b8b4a4;
-  --pattern-line: #cbc6b5;
+  --mf-page: #eceae0;
+  --mf-header: #e8e4d8;
+  --mf-panel: #dedad0;
+  --mf-surface: #ffffff;
+  --mf-surface-subtle: #faf9f5;
+  --mf-table-head: #f3f0e4;
+  --mf-input-bg: #f3f0e4;
+  --mf-input-on-white: #faf9f5;
+  --mf-row-hover: #f3f0e4;
+  --mf-ghost-hover: #f0ede4;
+  --mf-btn-sec-bg: #dedad0;
+  --mf-btn-sec-hover: #d0ccc0;
+  --mf-border: #d4cfbf;
+  --mf-border-subtle: #e8e4d8;
+  --mf-divide: #f0ede4;
 
-  --accent: #f5471f;
-  --accent-secondary: #f47721;
-  --accent-deep: #d83c16;
-  --accent-text: #a83010;
-  --accent-soft: rgba(245, 71, 31, 0.12);
-  --on-accent: #ffffff;
+  --mf-text: #1a1a1a;
+  --mf-text-body: #5a5040;
+  --mf-text-muted: #8a8070;
+  --mf-text-label: #a09880;
 
-  --carbon: #1a1a1a;
-  --carbon-raised: #272727;
-  --on-carbon: #ffffff;
-  --on-carbon-muted: #999999;
-  --on-carbon-accent: #ff6a3d;
-  --on-carbon-pattern: #404040;
-  --logo-light: #e2e2e2;
+  --mf-accent: #f5471f;
+  --mf-accent-hover: #d83c16;
+  --mf-accent-secondary: #f47721;
+  --mf-accent-soft: rgba(245, 71, 31, 0.10);
+  --mf-accent-border: rgba(245, 71, 31, 0.25);
 
-  --success: #178f45;
-  --success-text: #116b34;
-  --success-soft: rgba(23, 143, 69, 0.14);
-  --success-border: rgba(23, 143, 69, 0.45);
+  --mf-green: #16a34a;
+  --mf-green-text: #15803d;
+  --mf-green-soft: rgba(22, 163, 74, 0.11);
+  --mf-green-border: rgba(22, 163, 74, 0.28);
 
-  --danger: #e5372a;
-  --danger-text: #b91c1c;
-  --danger-soft: rgba(229, 55, 42, 0.12);
-  --danger-border: rgba(229, 55, 42, 0.42);
+  --mf-amber: #d97706;
+  --mf-amber-text: #b45309;
+  --mf-amber-soft: rgba(217, 119, 6, 0.12);
+  --mf-amber-border: rgba(217, 119, 6, 0.30);
 
-  --warning: #b86e00;
-  --warning-text: #8a5200;
-  --warning-soft: rgba(184, 110, 0, 0.14);
-  --warning-border: rgba(184, 110, 0, 0.45);
+  --mf-red: #dc2626;
+  --mf-red-text: #dc2626;
+  --mf-red-soft: #fef2f2;
+  --mf-red-border: #fecaca;
 
-  --row-hover: #f7f4eb;
-  --th-bg: #f3f0e4;
-  --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.08);
-  --font-display: "Comfortaa", "Trebuchet MS", sans-serif;
-  --font-text: "Geomanist", "Inter", Arial, sans-serif;
-  --radius-none: 0px;
-  --radius-sm: 4px;
+  --mf-shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px -1px rgba(0, 0, 0, 0.06);
+  --mf-shadow-dropdown: 0 12px 28px -4px rgba(26, 26, 26, 0.14);
+  --mf-font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --mf-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   color-scheme: light;
 }
 
 [data-theme="carbono"] {
-  --page: #1a1a1a;
-  --panel: #202020;
-  --card: #272727;
-  --inset: #303030;
-  --skeleton: #3d3d3d;
-  --skeleton-strong: #505050;
-  --ink: #ffffff;
-  --body: #999999;
-  --border: #333333;
-  --border-strong: #404040;
-  --dashed: #555555;
-  --pattern-line: #404040;
+  --mf-page: #0d0d0d;
+  --mf-header: #161616;
+  --mf-panel: #1a1a1a;
+  --mf-surface: #1a1a1a;
+  --mf-surface-subtle: #141414;
+  --mf-table-head: #141414;
+  --mf-input-bg: #161616;
+  --mf-input-on-white: #141414;
+  --mf-row-hover: #252525;
+  --mf-ghost-hover: #252525;
+  --mf-btn-sec-bg: #1e1e1e;
+  --mf-btn-sec-hover: #282828;
+  --mf-border: #2a2a2a;
+  --mf-border-subtle: #2a2a2a;
+  --mf-divide: #2a2a2a;
 
-  --accent: #f5471f;
-  --accent-secondary: #f47721;
-  --accent-deep: #d83c16;
-  --accent-text: #ff6a3d;
-  --accent-soft: rgba(245, 71, 31, 0.14);
-  --on-accent: #ffffff;
+  --mf-text: #fcf9e0;
+  --mf-text-body: #a09880;
+  --mf-text-muted: #8a8070;
+  --mf-text-label: #a09880;
 
-  --success: #178f45;
-  --success-text: #4cc27a;
-  --success-soft: rgba(23, 143, 69, 0.16);
-  --success-border: rgba(23, 143, 69, 0.48);
+  --mf-accent: #f5471f;
+  --mf-accent-hover: #d83c16;
+  --mf-accent-secondary: #f47721;
+  --mf-accent-soft: rgba(245, 71, 31, 0.14);
+  --mf-accent-border: rgba(245, 71, 31, 0.32);
 
-  --danger: #e5372a;
-  --danger-text: #ff7a6e;
-  --danger-soft: rgba(229, 55, 42, 0.16);
-  --danger-border: rgba(229, 55, 42, 0.48);
+  --mf-green: #22c55e;
+  --mf-green-text: #86efac;
+  --mf-green-soft: rgba(21, 128, 61, 0.16);
+  --mf-green-border: rgba(21, 128, 61, 0.36);
 
-  --warning: #b86e00;
-  --warning-text: #f0a830;
-  --warning-soft: rgba(184, 110, 0, 0.18);
-  --warning-border: rgba(184, 110, 0, 0.50);
+  --mf-amber: #f59e0b;
+  --mf-amber-text: #fbbf24;
+  --mf-amber-soft: rgba(245, 158, 11, 0.15);
+  --mf-amber-border: rgba(245, 158, 11, 0.35);
 
-  --row-hover: #2d2d2d;
-  --th-bg: #202020;
-  --shadow-card: none;
+  --mf-red: #ef4444;
+  --mf-red-text: #f87171;
+  --mf-red-soft: rgba(220, 38, 38, 0.14);
+  --mf-red-border: rgba(220, 38, 38, 0.34);
+
+  --mf-shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.35);
+  --mf-shadow-dropdown: 0 16px 36px -4px rgba(0, 0, 0, 0.6);
   color-scheme: dark;
 }
 
 /* ----------------------------------------------------------------------------
- * 3. Base typography, focus ring & sharp geometry (zero gradients anywhere)
+ * 3. Base Reset & Full-bleed App Shell
  * ---------------------------------------------------------------------------- */
 html {
-  background-color: var(--page);
+  background-color: var(--mf-page);
+  height: 100%;
 }
 
 body {
-  background-color: var(--page);
-  color: var(--ink);
-  font-family: var(--font-text);
+  background-color: var(--mf-page);
+  color: var(--mf-text-body);
+  font-family: var(--mf-font-sans);
   font-size: 14px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
-  margin-bottom: 68px;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-h1, h2, h3, h4, h5, h6,
-.h1, .h2, .h3, .h4 {
-  font-family: var(--font-display);
-  color: var(--ink);
-  font-weight: 700;
-}
-
-a {
-  color: var(--accent-text);
-}
-
-a:hover,
-a:focus {
-  color: var(--accent-deep);
-}
-
-[data-theme="carbono"] a:hover,
-[data-theme="carbono"] a:focus {
-  color: var(--accent);
-}
-
-/* Brand focus outline: 3px accent-secondary (#f47721) at 3px offset */
-a:focus-visible,
-button:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible,
-.btn:focus-visible,
-.pfa-action-btn:focus-visible {
-  outline: 3px solid var(--accent-secondary) !important;
-  outline-offset: 3px;
-}
-
-/* Strip Bootstrap 3 gradients and rounded corners globally on surfaces */
+/* Strip legacy Bootstrap 3 gradients & text shadows */
 .btn,
 .navbar,
 .panel,
@@ -204,699 +180,666 @@ textarea:focus-visible,
 .panel-footer,
 .dropdown-menu,
 .alert,
-.well,
-.input-group-addon {
+.well {
   background-image: none !important;
-  border-radius: var(--radius-none) !important;
   text-shadow: none !important;
 }
 
-body > .container[role="main"] {
-  width: 96% !important;
-  max-width: 1480px;
-  min-width: 0 !important;
-  padding-top: 84px;
-  padding-bottom: 32px;
+a {
+  color: var(--mf-accent);
+  transition: color 150ms ease;
+}
+
+a:hover,
+a:focus {
+  color: var(--mf-accent-hover);
+}
+
+:focus-visible {
+  outline: 2px solid var(--mf-accent);
+  outline-offset: 2px;
+}
+
+/* Main full-bleed app canvas */
+.mf-main {
+  flex: 1 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-top: 56px;
+}
+
+.mf-content {
+  width: 100%;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+@media (max-width: 767px) {
+  .mf-content {
+    padding: 16px;
+  }
+}
+
+/* Custom thin MartFlow scrollbars */
+.mf-scrollbar,
+.domain-list-scroll,
+.table-responsive {
+  scrollbar-width: thin;
+  scrollbar-color: var(--mf-border) transparent;
 }
 
 /* ----------------------------------------------------------------------------
- * 4. Carbono Navbar (always #1a1a1a with official negative horizontal logo)
+ * 4. MartFlow Topbar (h-14 / 56px full-bleed, synced with Creme & Carbono)
  * ---------------------------------------------------------------------------- */
-.navbar-default {
-  background-color: var(--carbon) !important;
+.mf-topbar.navbar-default {
+  background-color: var(--mf-header) !important;
   border: 0;
-  border-bottom: 1px solid #333333;
+  border-bottom: 1px solid var(--mf-border);
   box-shadow: none;
-  min-height: 60px;
+  min-height: 56px;
+  height: 56px;
   margin-bottom: 0;
+  z-index: 1030;
 }
 
-.navbar-default .container-fluid {
-  max-width: 1520px;
-  padding-left: 18px;
-  padding-right: 18px;
+.mf-topbar .container-fluid {
+  width: 100%;
+  padding-left: 20px;
+  padding-right: 20px;
+  min-height: 56px;
 }
 
-.navbar-default .navbar-header {
+.mf-topbar .navbar-header {
   display: flex;
   align-items: center;
-  min-height: 60px;
+  height: 56px;
 }
 
-.navbar-default .navbar-brand {
-  height: 60px;
-  padding: 10px 18px 10px 4px !important;
+.mf-topbar .navbar-brand {
+  height: 56px;
+  padding: 10px 18px 10px 0 !important;
   display: flex;
   align-items: center;
 }
 
-.navbar-default .navbar-brand img#login_header_logo {
-  height: 36px;
+.mf-topbar .navbar-brand img {
+  height: 30px;
   width: auto;
   display: block;
 }
 
-.navbar-default .navbar-nav > li > a,
-.navbar-default .navbar-nav > li > a.btn.navbar-btn {
-  font-family: var(--font-display);
+/* Auto-swap positive logo (Creme) and negative logo (Carbono) */
+.mf-logo-neg { display: none !important; }
+[data-theme="carbono"] .mf-logo-pos { display: none !important; }
+[data-theme="carbono"] .mf-logo-neg { display: block !important; }
+
+.mf-topbar .navbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.mf-topbar .navbar-nav > li > a,
+.mf-topbar .navbar-nav > li > a.btn.navbar-btn {
+  font-family: var(--mf-font-sans);
   font-size: 13px;
-  font-weight: 600;
-  color: var(--logo-light) !important;
+  font-weight: 500;
+  color: var(--mf-text-body) !important;
   background-color: transparent !important;
   border: 0 !important;
-  border-bottom: 3px solid transparent !important;
-  margin: 0 !important;
-  padding: 19px 11px 16px 11px !important;
-  line-height: 22px;
-  transition: color 140ms ease, border-color 140ms ease;
-}
-
-.navbar-default .navbar-nav > li > a:hover,
-.navbar-default .navbar-nav > li > a:focus,
-.navbar-default .navbar-nav > li.open > a,
-.navbar-default .navbar-nav > li.open > a:hover,
-.navbar-default .navbar-nav > li.open > a:focus,
-.navbar-default .navbar-nav > li.active > a {
-  color: var(--on-carbon) !important;
-  background-color: transparent !important;
-  border-bottom-color: var(--accent) !important;
-}
-
-.navbar-default .navbar-nav > li > a .glyphicon {
-  color: var(--on-carbon-muted);
-  font-size: 11px;
-  margin-right: 4px;
-}
-
-.navbar-default .navbar-nav > li > a:hover .glyphicon,
-.navbar-default .navbar-nav > li.open > a .glyphicon,
-.navbar-default .navbar-nav > li.active > a .glyphicon {
-  color: var(--accent);
-}
-
-.navbar-default .dropdown-menu {
-  background-color: var(--carbon-raised);
-  border: 1px solid #404040;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
-  padding: 4px 0;
-  margin-top: 0;
-}
-
-.navbar-default .dropdown-menu > li > a {
-  color: var(--logo-light);
-  font-family: var(--font-text);
-  font-size: 13px;
-  padding: 9px 16px;
-}
-
-.navbar-default .dropdown-menu > li > a:hover,
-.navbar-default .dropdown-menu > li > a:focus {
-  background-color: var(--accent);
-  color: var(--on-accent);
-}
-
-.navbar-default .dropdown-menu > li > a .glyphicon {
-  margin-right: 6px;
-  opacity: 0.75;
-}
-
-.navbar-default .dropdown-menu > li > a:hover .glyphicon {
-  opacity: 1;
-  color: var(--on-accent);
-}
-
-.navbar-default .navbar-toggle {
-  border-color: #404040;
-  border-radius: 0;
-  margin-left: auto;
-}
-
-.navbar-default .navbar-toggle:hover,
-.navbar-default .navbar-toggle:focus {
-  background-color: #272727;
-}
-
-.navbar-default .navbar-toggle .icon-bar {
-  background-color: var(--logo-light);
-}
-
-/* Theme switcher button inside Carbono navbar */
-.navbar-nav.navbar-right {
-  margin-right: 0;
-}
-
-.pfa-theme-toggle {
+  border-radius: 8px !important;
+  margin: 10px 1px !important;
+  padding: 7px 11px !important;
+  line-height: 20px;
   display: inline-flex;
   align-items: center;
+  gap: 5px;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+.mf-topbar .navbar-nav > li > a:hover,
+.mf-topbar .navbar-nav > li > a:focus,
+.mf-topbar .navbar-nav > li.open > a,
+.mf-topbar .navbar-nav > li.open > a:hover,
+.mf-topbar .navbar-nav > li.open > a:focus {
+  background-color: var(--mf-ghost-hover) !important;
+  color: var(--mf-text) !important;
+}
+
+.mf-topbar .navbar-nav > li > a .caret {
+  opacity: 0.55;
+  margin-left: 2px;
+}
+
+.mf-topbar .dropdown-menu {
+  background-color: var(--mf-surface);
+  border: 1px solid var(--mf-border);
+  border-radius: 12px !important;
+  box-shadow: var(--mf-shadow-dropdown);
+  padding: 6px;
+  min-width: 210px;
+  margin-top: 4px;
+}
+
+.mf-topbar .dropdown-menu > li > a {
+  color: var(--mf-text-body);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 140ms ease, color 140ms ease;
+}
+
+.mf-topbar .dropdown-menu > li > a:hover,
+.mf-topbar .dropdown-menu > li > a:focus {
+  background-color: var(--mf-row-hover);
+  color: var(--mf-text);
+}
+
+/* Right utility cluster (theme toggle + logout ghost buttons) */
+.mf-topbar-utils {
+  display: flex;
+  align-items: center;
   gap: 6px;
-  margin: 13px 0 13px 10px;
-  padding: 6px 12px;
+  height: 56px;
+}
+
+.mf-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
   height: 34px;
-  background-color: #272727;
-  border: 1px solid #404040;
-  border-radius: var(--radius-none);
-  color: var(--logo-light);
-  font-family: var(--font-display);
-  font-size: 12px;
-  font-weight: 600;
+  padding: 0;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background-color: transparent;
+  color: var(--mf-text-body);
+  text-decoration: none !important;
   cursor: pointer;
-  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
 }
 
-.pfa-theme-toggle:hover {
-  border-color: var(--accent);
-  color: var(--on-carbon);
-  background-color: #303030;
+.mf-icon-btn:hover,
+.mf-icon-btn:focus {
+  background-color: var(--mf-ghost-hover);
+  color: var(--mf-text);
 }
 
-.pfa-theme-toggle .pfa-icon {
-  width: 14px;
-  height: 14px;
+.mf-icon-btn--logout:hover {
+  background-color: var(--mf-red-soft);
+  color: var(--mf-red-text);
+}
+
+.mf-icon-btn svg,
+.mf-btn-primary svg,
+.mf-btn-secondary svg {
+  width: 16px;
+  height: 16px;
   fill: none;
-  stroke: var(--accent);
+  stroke: currentColor;
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
+  flex-shrink: 0;
 }
 
-.pfa-theme-toggle .pfa-theme-icon-sun,
-.pfa-theme-toggle .pfa-theme-label-creme {
-  display: none;
+.mf-theme-icon-sun { display: none; }
+[data-theme="carbono"] .mf-theme-icon-moon { display: none; }
+[data-theme="carbono"] .mf-theme-icon-sun { display: block; }
+
+.mf-topbar .navbar-toggle {
+  border-color: var(--mf-border);
+  border-radius: 8px;
+  margin-left: auto;
 }
 
-[data-theme="carbono"] .pfa-theme-toggle .pfa-theme-icon-moon,
-[data-theme="carbono"] .pfa-theme-toggle .pfa-theme-label-carbono {
-  display: none;
+.mf-topbar .navbar-toggle .icon-bar {
+  background-color: var(--mf-text-body);
 }
 
-[data-theme="carbono"] .pfa-theme-toggle .pfa-theme-icon-sun,
-[data-theme="carbono"] .pfa-theme-toggle .pfa-theme-label-creme {
-  display: inline-block;
-}
-
-@media (max-width: 767px) {
-  .navbar-default .navbar-nav > li > a,
-  .navbar-default .navbar-nav > li > a.btn.navbar-btn {
-    padding: 12px 14px !important;
-    border-bottom: 0 !important;
-    border-left: 3px solid transparent !important;
-    text-align: left;
+@media (max-width: 991px) {
+  .mf-topbar.navbar-default { height: auto; }
+  .mf-topbar .navbar-collapse {
+    background-color: var(--mf-header);
+    border-top: 1px solid var(--mf-border);
+    padding-bottom: 10px;
   }
-  .navbar-default .navbar-nav > li.open > a,
-  .navbar-default .navbar-nav > li > a:hover {
-    border-left-color: var(--accent) !important;
+  .mf-topbar .navbar-nav {
+    display: block;
   }
-  .pfa-theme-toggle {
-    margin: 10px 14px 14px 14px;
+  .mf-topbar .navbar-nav > li > a,
+  .mf-topbar .navbar-nav > li > a.btn.navbar-btn {
+    margin: 2px 0 !important;
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .mf-topbar-utils {
+    height: auto;
+    padding: 8px 0 4px 0;
   }
 }
 
 /* ----------------------------------------------------------------------------
- * 5. Panels, cards, forms & brand buttons
+ * 5. MartFlow Full-bleed Page Sub-Header & Tab Strip
  * ---------------------------------------------------------------------------- */
-.panel {
-  background-color: var(--card);
-  border: 1px solid var(--border-strong);
-  box-shadow: var(--shadow-card);
-  margin-bottom: 20px;
+.mf-page-header {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 24px;
+  background-color: var(--mf-header);
+  border-bottom: 1px solid var(--mf-border);
 }
 
-.panel-default > .panel-heading {
-  background-color: var(--panel);
-  border-bottom: 1px solid var(--border-strong);
-  color: var(--ink);
-  padding: 14px 18px;
+.mf-page-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
 }
 
-.panel-default > .panel-heading h4 {
-  margin: 0;
-  font-size: 16px;
+.mf-eyebrow {
+  font-size: 10px;
   font-weight: 700;
-  color: var(--ink);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--mf-text-label);
+  margin: 0;
+  line-height: 1.4;
 }
 
-.panel-body {
-  background-color: var(--card);
-  color: var(--ink);
+.mf-eyebrow a {
+  color: var(--mf-text-label);
+  text-decoration: none;
 }
 
-.panel-footer {
-  background-color: var(--panel);
-  border-top: 1px solid var(--border-strong);
-  padding: 12px 18px;
+.mf-eyebrow a:hover {
+  color: var(--mf-accent);
 }
 
-hr {
-  border-top-color: var(--border);
+.mf-page-title {
+  font-family: var(--mf-font-sans);
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: var(--mf-text);
+  margin: 0;
+  line-height: 1.2;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
 }
 
-/* Form controls — 4px radius strictly per mARTdesign brand rule */
-.form-control {
-  background-color: var(--inset);
-  color: var(--ink);
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius-sm) !important;
-  box-shadow: none !important;
-  height: 38px;
-  font-family: var(--font-text);
+.mf-page-header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.mf-header-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+/* MartFlow Tab Strip (from parametros.html) */
+.mf-tab-strip {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 24px;
+  background-color: var(--mf-panel);
+  border-bottom: 1px solid var(--mf-border);
+}
+
+.mf-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.mf-tab,
+.mf-tab-active {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  text-decoration: none !important;
+  white-space: nowrap;
+  transition: background-color 150ms ease, color 150ms ease, box-shadow 150ms ease;
+}
+
+.mf-tab {
+  color: var(--mf-text-body);
+  font-weight: 500;
+}
+
+.mf-tab:hover {
+  background-color: rgba(212, 207, 191, 0.55);
+  color: var(--mf-text);
+}
+
+[data-theme="carbono"] .mf-tab:hover {
+  background-color: #141414;
+  color: var(--mf-text);
+}
+
+.mf-tab-active {
+  background-color: var(--mf-surface);
+  color: var(--mf-accent);
+  font-weight: 700;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="carbono"] .mf-tab-active {
+  background-color: #252525;
+}
+
+/* Section bar when list.tpl is embedded inside /virtual */
+.mf-section-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.mf-section-heading {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--mf-text);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ----------------------------------------------------------------------------
+ * 6. MartFlow Buttons, Badges & Inputs
+ * ---------------------------------------------------------------------------- */
+.mf-btn-primary,
+.btn.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 10px !important;
+  border: 0 !important;
+  background-color: var(--mf-accent) !important;
+  color: #ffffff !important;
+  font-family: var(--mf-font-sans);
   font-size: 13.5px;
+  font-weight: 600;
+  line-height: 20px;
+  text-decoration: none !important;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(245, 71, 31, 0.25);
+  transition: background-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+}
+
+.mf-btn-primary:hover,
+.mf-btn-primary:focus,
+.btn.btn-primary:hover,
+.btn.btn-primary:focus {
+  background-color: var(--mf-accent-hover) !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(245, 71, 31, 0.38);
+}
+
+.mf-btn-secondary,
+.btn.btn-default,
+.btn.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border-radius: 10px !important;
+  border: 1px solid var(--mf-border) !important;
+  background-color: var(--mf-btn-sec-bg) !important;
+  color: var(--mf-text-body) !important;
+  font-family: var(--mf-font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 20px;
+  text-decoration: none !important;
+  cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.mf-btn-secondary:hover,
+.mf-btn-secondary:focus,
+.btn.btn-default:hover,
+.btn.btn-default:focus,
+.btn.btn-secondary:hover,
+.btn.btn-secondary:focus {
+  background-color: var(--mf-btn-sec-hover) !important;
+  color: var(--mf-text) !important;
+}
+
+.btn.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  border-radius: 10px !important;
+  border: 0 !important;
+  background-color: var(--mf-red) !important;
+  color: #ffffff !important;
+  font-weight: 600;
+}
+
+/* Badges (exact MartFlow .mf-badge & .mf-badge-solid) */
+.mf-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background-color: var(--mf-accent-soft);
+  color: var(--mf-accent);
+  white-space: nowrap;
+}
+
+.mf-badge-solid {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  background-color: var(--mf-panel);
+  color: var(--mf-text-body);
+  white-space: nowrap;
+}
+
+[data-theme="carbono"] .mf-badge-solid {
+  background-color: #141414;
+  border: 1px solid #2a2a2a;
+}
+
+/* Inputs & Selects (exact MartFlow .mf-input / .mf-select) */
+.mf-input,
+.mf-select,
+.form-control {
+  background-color: var(--mf-input-bg);
+  border: 1px solid var(--mf-border);
+  border-radius: 12px !important;
+  color: var(--mf-text);
+  font-family: var(--mf-font-sans);
+  font-size: 13.5px;
+  padding: 9px 14px;
+  height: 40px;
+  box-shadow: none !important;
+  transition: border-color 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
+}
+
+.mf-form-sheet .form-control,
+.panel-body .form-control {
+  background-color: var(--mf-input-on-white);
 }
 
 textarea.form-control,
 select[multiple].form-control {
   height: auto;
+  min-height: 110px;
 }
 
+.mf-input:focus,
+.mf-select:focus,
 .form-control:focus {
-  border-color: var(--accent);
-  background-color: var(--card);
+  border-color: var(--mf-accent) !important;
+  box-shadow: 0 0 0 2px rgba(245, 71, 31, 0.22) !important;
+  outline: none;
 }
 
+.mf-input::placeholder,
 .form-control::placeholder {
-  color: var(--body);
-  opacity: 0.8;
+  color: var(--mf-text-label);
 }
 
-.control-label,
-label {
-  color: var(--ink);
-  font-weight: 600;
-  font-size: 13px;
-}
-
-.help-block {
-  color: var(--body);
-  font-size: 12px;
-}
-
-.form-control-static {
-  color: var(--ink);
-}
-
-/* Primary filled button — #f5471f, white Comfortaa 600 text, hover #d83c16 */
-.btn-primary {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 13.5px;
-  background-color: var(--accent) !important;
-  border: 2px solid var(--accent) !important;
-  color: var(--on-accent) !important;
-  padding: 8px 18px;
-  transition: background-color 140ms ease, border-color 140ms ease;
-}
-
-.btn-primary:hover,
-.btn-primary:focus,
-.btn-primary:active {
-  background-color: var(--accent-deep) !important;
-  border-color: var(--accent-deep) !important;
-  color: var(--on-accent) !important;
-}
-
-/* Outline / secondary button */
-.btn-default,
-.btn-secondary {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 13px;
-  background-color: var(--card) !important;
-  border: 1px solid var(--border-strong) !important;
-  color: var(--ink) !important;
-  padding: 7px 14px;
-  transition: border-color 140ms ease, background-color 140ms ease, color 140ms ease;
-}
-
-.btn-default:hover,
-.btn-default:focus,
-.btn-secondary:hover,
-.btn-secondary:focus {
-  border-color: var(--accent) !important;
-  background-color: var(--accent-soft) !important;
-  color: var(--ink) !important;
-}
-
-.btn-danger {
-  font-family: var(--font-display);
-  font-weight: 600;
-  background-color: var(--danger) !important;
-  border: 2px solid var(--danger) !important;
-  color: #ffffff !important;
-}
-
-.btn-danger:hover,
-.btn-danger:focus {
-  background-color: #b91c1c !important;
-  border-color: #b91c1c !important;
-  color: #ffffff !important;
-}
-
-/* Alerts & MOTD */
-#motd {
-  background-color: var(--warning-soft);
-  border: 1px solid var(--warning-border);
-  border-left: 4px solid var(--warning);
-  color: var(--warning-text);
-  padding: 10px 14px;
-  margin-bottom: 16px;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.alert-info {
-  background-color: var(--success-soft);
-  border: 1px solid var(--success-border);
-  border-left: 4px solid var(--success);
-  color: var(--success-text);
-}
-
-.alert-danger {
-  background-color: var(--danger-soft);
-  border: 1px solid var(--danger-border);
-  border-left: 4px solid var(--danger);
-  color: var(--danger-text);
-}
-
-.alert ul {
-  margin: 0;
-  padding-left: 18px;
-}
-
-/* ----------------------------------------------------------------------------
- * 6. Dashboard (/main) — Zigzag brand headers & sharp action rows
- * ---------------------------------------------------------------------------- */
-.pfa-brand-zigzag {
-  display: block;
-  width: 48px;
-  height: 12px;
-  margin-bottom: 8px;
-}
-
-#main_menu .pfa-main-section {
-  padding: 20px 22px;
-}
-
-#main_menu .pfa-main-section + .pfa-main-section {
-  border-top: 1px solid var(--border);
-}
-
-#main_menu .pfa-main-section h2 {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 14px 0;
-}
-
-#main_menu .table > tbody > tr > td {
-  border-top-color: var(--border);
-  vertical-align: middle;
-  color: var(--body);
-}
-
-#main_menu .table > tbody > tr:first-child > td {
-  border-top: 0;
-}
-
-#main_menu .table .btn-primary.btn-block {
-  min-width: 210px;
-  padding: 10px 14px;
-}
-
-#main_menu .input-group .btn-default {
-  height: 38px;
-  background-color: var(--accent) !important;
-  border-color: var(--accent) !important;
-  color: var(--on-accent) !important;
-}
-
-#main_menu .input-group .btn-default:hover {
-  background-color: var(--accent-deep) !important;
-  border-color: var(--accent-deep) !important;
-}
-
-/* ----------------------------------------------------------------------------
- * 7. Login & Recovery pages — Always Carbono (#1a1a1a) + Quadrant Symbol
- * ---------------------------------------------------------------------------- */
-body.page-login,
-body.page-login-mfa,
-body.page-password-recover,
-body.page-password-change {
-  background-color: var(--carbon) !important;
-  color: var(--on-carbon) !important;
-  min-height: 100vh;
-  position: relative;
-  overflow-x: hidden;
-  --page: #1a1a1a;
-  --panel: #202020;
-  --card: #272727;
-  --inset: #303030;
-  --ink: #ffffff;
-  --body: #999999;
-  --border: #333333;
-  --border-strong: #404040;
-  --accent-text: #ff6a3d;
-  color-scheme: dark;
-}
-
-/* Subtle hexagonal dot lattice + official bottom-right hypercube quadrant */
-body.page-login::before,
-body.page-login-mfa::before,
-body.page-password-recover::before,
-body.page-password-change::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background-image: url("../images/brand/pontos-hex-carbono.svg");
-  background-repeat: no-repeat;
-  background-position: left top;
-  background-size: 760px auto;
-  opacity: 0.45;
-  pointer-events: none;
-  z-index: 0;
-}
-
-body.page-login::after,
-body.page-login-mfa::after,
-body.page-password-recover::after,
-body.page-password-change::after {
-  content: "";
-  position: fixed;
-  right: 0;
-  bottom: 0;
-  width: 70vw;
-  max-width: 960px;
-  height: 70vh;
-  max-height: 620px;
-  background-image: url("../images/brand/simbolo-inf-dir-carbono.svg");
-  background-repeat: no-repeat;
-  background-position: right bottom;
-  background-size: contain;
-  pointer-events: none;
-  z-index: 0;
-}
-
-body.page-login > .container[role="main"],
-body.page-login-mfa > .container[role="main"],
-body.page-password-recover > .container[role="main"],
-body.page-password-change > .container[role="main"] {
-  position: relative;
-  z-index: 1;
-  padding-top: 86px;
-}
-
-div#login {
-  max-width: 460px !important;
-  width: 100%;
-  margin: 18px auto 32px auto;
-  padding: 0 12px;
-}
-
-div#login .pfa-login-header {
-  margin-bottom: 18px;
-  text-align: left;
-}
-
-div#login .pfa-login-eyebrow {
-  font-family: var(--font-display);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--on-carbon-accent);
-  margin: 0 0 6px 0;
-}
-
-div#login h2.h2 {
-  font-family: var(--font-display);
-  font-size: 20px;
-  line-height: 1.35;
-  font-weight: 400;
-  color: var(--on-carbon);
+/* Inline search / select in page header */
+.mf-header-control form {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   margin: 0;
 }
 
-div#login .well {
-  background-color: var(--carbon-raised);
-  border: 1px solid #333333;
-  border-top: 3px solid var(--accent);
-  padding: 28px 28px 24px 28px;
-  box-shadow: none;
-}
-
-div#login label {
-  color: var(--logo-light);
-  font-family: var(--font-text);
+.mf-header-control .form-control,
+.mf-header-control select {
+  height: 36px;
+  padding: 6px 12px;
+  border-radius: 10px !important;
+  background-color: var(--mf-surface);
+  border: 1px solid var(--mf-border);
+  color: var(--mf-text);
   font-size: 13px;
-  font-weight: 500;
-  margin-bottom: 6px;
+  min-width: 170px;
 }
 
-div#login .form-control {
-  background-color: #303030;
-  border: 1px solid #404040;
-  color: #ffffff;
-  height: 44px;
-  font-size: 14px;
+[data-theme="carbono"] .mf-header-control .form-control,
+[data-theme="carbono"] .mf-header-control select {
+  background-color: #1a1a1a;
 }
 
-div#login .form-control:focus {
-  border-color: var(--accent);
-  background-color: #272727;
-}
-
-div#login .btn-primary.btn-lg {
-  width: 100%;
-  min-height: 48px;
-  font-family: var(--font-display);
-  font-size: 15px;
-  font-weight: 600;
-  background-color: var(--accent) !important;
-  border-color: var(--accent) !important;
-  color: var(--on-accent) !important;
-  margin-top: 6px;
-}
-
-div#login .btn-primary.btn-lg:hover {
-  background-color: var(--accent-deep) !important;
-  border-color: var(--accent-deep) !important;
-}
-
-div#login .reset-button {
-  width: 100%;
-  margin-left: 0;
-}
-
-div#login .reset-button .btn-default {
-  background-color: transparent !important;
-  border: 1px solid #404040 !important;
-  color: var(--logo-light) !important;
-  min-height: 40px;
-}
-
-div#login .reset-button .btn-default:hover {
-  border-color: var(--accent) !important;
-  color: var(--on-carbon) !important;
-}
-
-div#login .pfa-login-alt {
-  margin-top: 18px;
-  padding-top: 16px;
-  border-top: 1px solid #333333;
-  text-align: center;
-  font-size: 13px;
-}
-
-div#login .pfa-login-alt a {
-  color: var(--on-carbon-accent);
-  font-weight: 500;
-}
-
-body.page-login .footer,
-body.page-login-mfa .footer,
-body.page-password-recover .footer,
-body.page-password-change .footer {
-  background-color: var(--carbon);
-  border-top: 1px solid #333333;
-  color: var(--on-carbon-muted);
-  position: relative;
-  z-index: 1;
+.mf-search-inline input.form-control {
+  width: 210px;
+  min-width: 150px;
 }
 
 /* ----------------------------------------------------------------------------
- * 8. Datatables: compact headers, vertical centering, zero forced scroll
+ * 7. Full-bleed MartFlow Flash Strips & MOTD
  * ---------------------------------------------------------------------------- */
-#admin_table,
-#mailbox_table,
-#log_table {
+.mf-flash-success,
+.mf-flash-error,
+.mf-flash-motd {
   width: 100%;
-  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 24px;
   font-size: 13px;
-  background-color: var(--card);
+  font-weight: 500;
 }
 
-#admin_table > thead > tr > th,
-#mailbox_table > thead > tr > th,
-#log_table > thead > tr > th {
-  background-color: var(--th-bg);
-  color: var(--body);
-  font-family: var(--font-display);
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-bottom: 2px solid var(--border-strong);
-  border-top: 0;
-  padding: 11px 8px;
-  vertical-align: middle;
-  white-space: normal;
-  line-height: 1.25;
+.mf-flash-success {
+  color: var(--mf-green-text);
+  background-color: #f0fdf4;
+  border-bottom: 1px solid #bbf7d0;
 }
 
-#admin_table > thead > tr:first-child > th[colspan],
-#mailbox_table > thead > tr:first-child > th[colspan] {
-  background-color: var(--panel);
-  color: var(--ink);
-  font-family: var(--font-display);
-  font-size: 14px;
-  font-weight: 700;
-  text-transform: none;
-  letter-spacing: 0;
-  text-align: left !important;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border-strong);
+[data-theme="carbono"] .mf-flash-success {
+  background-color: rgba(21, 128, 61, 0.12);
+  border-bottom-color: rgba(21, 128, 61, 0.32);
 }
 
-#admin_table > tbody > tr > td,
-#mailbox_table > tbody > tr > td,
-#log_table > tbody > tr > td {
-  padding: 9px 8px;
-  vertical-align: middle;
-  border-top: 1px solid var(--border);
-  color: var(--ink);
+.mf-flash-error {
+  color: var(--mf-red-text);
+  background-color: var(--mf-red-soft);
+  border-bottom: 1px solid var(--mf-red-border);
 }
 
-#admin_table > tbody > tr:hover > td,
-#mailbox_table > tbody > tr:hover > td,
-#log_table > tbody > tr:hover > td {
-  background-color: var(--row-hover);
-}
-
-#admin_table td.list-col-domain a,
-#mailbox_table td a:not(.pfa-action-btn):not(.btn) {
-  color: var(--ink);
+.mf-flash-motd {
+  color: var(--mf-amber-text);
+  background-color: var(--mf-amber-soft);
+  border-bottom: 1px solid var(--mf-amber-border);
   font-weight: 600;
+}
+
+.mf-flash-success ul,
+.mf-flash-error ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Search filter chips strip */
+.mf-search-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--mf-text-body);
+}
+
+.mf-search-chips a {
+  font-weight: 600;
+  color: var(--mf-accent);
   text-decoration: none;
 }
 
-#admin_table td.list-col-domain a:hover,
-#mailbox_table td a:not(.pfa-action-btn):not(.btn):hover {
-  color: var(--accent-text);
-  text-decoration: underline;
+/* ----------------------------------------------------------------------------
+ * 8. MartFlow Datatables (.mf-table-wrapper — clean, rounded-2xl, zero scroll)
+ * ---------------------------------------------------------------------------- */
+.mf-table-wrapper {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 16px;
+  border: 1px solid var(--mf-border-subtle);
+  background-color: var(--mf-surface);
+  box-shadow: var(--mf-shadow-sm);
 }
 
-/* Override upstream forced 1240px min-width on domain list */
-.domain-list-scroll {
+.mf-table-scroll,
+.domain-list-scroll,
+.mf-table-wrapper > .table-responsive {
   display: block;
   width: 100%;
   overflow-x: auto;
+  border: 0;
+  margin: 0;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -905,108 +848,128 @@ body.page-password-change .footer {
   width: 100%;
 }
 
-/* Balanced, compact column sizing for /list/domain */
-#admin_table th.list-col-domain,
-#admin_table td.list-col-domain {
-  min-width: 165px;
-  word-break: break-word;
+#admin_table,
+#mailbox_table,
+#log_table,
+.mf-table {
+  width: 100%;
+  margin-bottom: 0;
+  border-collapse: collapse;
+  font-size: 13.5px;
+  background-color: transparent;
 }
 
-#admin_table th.list-col-description,
-#admin_table td.list-col-description {
-  min-width: 90px;
-  max-width: 220px;
-  color: var(--body);
+#admin_table > thead > tr > th,
+#mailbox_table > thead > tr > th,
+#log_table > thead > tr > th,
+.mf-table > thead > tr > th {
+  background-color: var(--mf-table-head);
+  color: var(--mf-text-label);
+  font-family: var(--mf-font-sans);
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  border-top: 0;
+  border-bottom: 1px solid var(--mf-border-subtle);
+  padding: 12px 12px;
+  vertical-align: middle;
+  white-space: normal !important;
+  line-height: 1.3;
 }
+
+#admin_table > tbody > tr > td,
+#mailbox_table > tbody > tr > td,
+#log_table > tbody > tr > td,
+.mf-table > tbody > tr > td {
+  padding: 12px 12px;
+  vertical-align: middle;
+  border-top: 1px solid var(--mf-divide);
+  color: var(--mf-text);
+  transition: background-color 140ms ease;
+}
+
+#admin_table > tbody > tr:first-child > td,
+#mailbox_table > tbody > tr:first-child > td,
+#log_table > tbody > tr:first-child > td,
+.mf-table > tbody > tr:first-child > td {
+  border-top: 0;
+}
+
+#admin_table > tbody > tr:hover > td,
+#mailbox_table > tbody > tr:hover > td,
+#log_table > tbody > tr:hover > td,
+.mf-table > tbody > tr:hover > td {
+  background-color: var(--mf-row-hover);
+}
+
+#admin_table td.list-col-domain a,
+#mailbox_table td a:not(.pfa-action-btn):not(.btn) {
+  color: var(--mf-text);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+#admin_table td.list-col-domain a:hover,
+#mailbox_table td a:not(.pfa-action-btn):not(.btn):hover {
+  color: var(--mf-accent);
+}
+
+/* Domain column widths — balanced for desktop without forced horizontal scroll */
+#admin_table th.list-col-domain,
+#admin_table td.list-col-domain { min-width: 170px; word-break: break-word; }
+
+#admin_table th.list-col-description,
+#admin_table td.list-col-description { min-width: 100px; max-width: 240px; color: var(--mf-text-body); }
 
 #admin_table th.list-col-aliases_quot,
 #admin_table td.list-col-aliases_quot,
 #admin_table th.list-col-mailboxes_quot,
-#admin_table td.list-col-mailboxes_quot {
-  width: 108px;
-  text-align: center;
-  white-space: nowrap;
-}
+#admin_table td.list-col-mailboxes_quot { width: 110px; text-align: center; white-space: nowrap; }
 
 #admin_table th.list-col-total_quot,
-#admin_table td.list-col-total_quot {
-  width: 124px;
-  text-align: center;
-  white-space: nowrap;
-}
+#admin_table td.list-col-total_quot { width: 126px; text-align: center; white-space: nowrap; }
 
 #admin_table th.list-col-maxquota,
 #admin_table td.list-col-maxquota,
 #admin_table th.list-col-max_domain_msg_mailsize,
-#admin_table td.list-col-max_domain_msg_mailsize {
-  width: 78px;
-  text-align: center;
-}
-
-#admin_table td.list-col-maxquota,
-#admin_table td.list-col-max_domain_msg_mailsize {
-  white-space: nowrap;
-  font-variant-numeric: tabular-nums;
-}
+#admin_table td.list-col-max_domain_msg_mailsize { width: 82px; text-align: center; font-variant-numeric: tabular-nums; }
 
 #admin_table th.list-col-transport,
-#admin_table td.list-col-transport {
-  width: 74px;
-  text-align: center;
-}
-
+#admin_table td.list-col-transport,
 #admin_table th.list-col-backupmx,
-#admin_table td.list-col-backupmx {
-  width: 68px;
-  text-align: center;
-}
+#admin_table td.list-col-backupmx,
+#admin_table th.list-col-password_expiry,
+#admin_table td.list-col-password_expiry { width: 72px; text-align: center; color: var(--mf-text-body); }
 
 #admin_table th.list-col-active,
 #admin_table td.list-col-active,
 #mailbox_table th.list-col-active,
-#mailbox_table td.list-col-active {
-  width: 52px;
-  text-align: center;
-  white-space: nowrap;
-}
+#mailbox_table td.list-col-active { width: 56px; text-align: center; white-space: nowrap; }
 
 #admin_table th.list-col-modified,
 #admin_table td.list-col-modified {
-  width: 92px;
+  width: 96px;
   text-align: center;
   white-space: nowrap;
-  color: var(--body);
+  color: var(--mf-text-muted);
   font-size: 12px;
   font-variant-numeric: tabular-nums;
-}
-
-#admin_table th.list-col-password_expiry,
-#admin_table td.list-col-password_expiry {
-  width: 68px;
-  text-align: center;
-}
-
-.domain-list-scroll > #admin_table th {
-  white-space: normal !important;
-  line-height: 1.25;
 }
 
 @media (max-width: 1300px) {
   .domain-list-scroll > #admin_table .list-col-modified { display: table-cell; }
   .domain-list-scroll > #admin_table { min-width: 0 !important; }
 }
-
 @media (max-width: 1200px) {
   .domain-list-scroll > #admin_table .list-col-backupmx { display: table-cell; }
   .domain-list-scroll > #admin_table { min-width: 0 !important; }
 }
-
 @media (max-width: 1120px) {
   .domain-list-scroll > #admin_table .list-col-transport { display: table-cell; }
   .domain-list-scroll > #admin_table { min-width: 0 !important; }
 }
 
-/* Action cells */
 #admin_table th.list-col-action,
 #admin_table td.list-col-action,
 #mailbox_table th.list-col-action,
@@ -1031,142 +994,123 @@ body.page-password-change .footer {
 }
 
 /* ----------------------------------------------------------------------------
- * 9. Minimalist semantic action buttons (brand tokens, 0px sharp corners)
+ * 9. MartFlow Ghost Action Icon Buttons (entidades.html aesthetic)
  * ---------------------------------------------------------------------------- */
 .pfa-action-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   padding: 0;
-  border-radius: var(--radius-none);
+  border-radius: 8px;
   border: 1px solid transparent;
   background-color: transparent;
   text-decoration: none !important;
   cursor: pointer;
   line-height: 1;
-  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
 }
 
 .pfa-action-btn .pfa-icon {
-  width: 15px;
-  height: 15px;
+  width: 16px;
+  height: 16px;
   fill: none;
   stroke: currentColor;
-  stroke-width: 2;
+  stroke-width: 1.9;
   stroke-linecap: round;
   stroke-linejoin: round;
   display: block;
   pointer-events: none;
 }
 
-/* Active ON (Habilitado) — mARTdesign --success (#178f45) */
+/* Active ON (Habilitado) — Verde suave sempre legivel como indicador de status */
 .pfa-btn-active-on {
-  background-color: var(--success-soft);
-  border-color: var(--success-border);
-  color: var(--success-text);
+  background-color: var(--mf-green-soft);
+  color: var(--mf-green-text);
 }
 .pfa-btn-active-on:hover,
 .pfa-btn-active-on:focus {
-  background-color: var(--success);
-  border-color: var(--success);
+  background-color: var(--mf-green);
   color: #ffffff;
 }
 
-/* Active OFF (Desabilitado) — Neutro do tema */
+/* Active OFF (Desabilitado) — Cinza neutro */
 .pfa-btn-active-off {
-  background-color: var(--inset);
-  border-color: var(--border-strong);
-  color: var(--body);
+  background-color: var(--mf-row-hover);
+  color: var(--mf-text-muted);
 }
 .pfa-btn-active-off:hover,
 .pfa-btn-active-off:focus {
-  background-color: var(--body);
-  border-color: var(--body);
-  color: var(--card);
+  background-color: var(--mf-text-body);
+  color: var(--mf-surface);
 }
 
-/* Edit (Editar) — mARTdesign --warning (#b86e00) */
+/* Edit (Editar) — Ghost limpo com ambar semantico */
 .pfa-btn-edit {
-  background-color: var(--warning-soft);
-  border-color: var(--warning-border);
-  color: var(--warning-text);
+  color: var(--mf-amber-text);
 }
 .pfa-btn-edit:hover,
 .pfa-btn-edit:focus {
-  background-color: var(--warning);
-  border-color: var(--warning);
-  color: #ffffff;
+  background-color: var(--mf-amber-soft);
+  color: var(--mf-amber);
 }
 
-/* Alias (Encaminhamento) — Contraste neutro/carbono (distinto de --danger) */
+/* Alias (Encaminhamento) — Ghost limpo neutro/contraste */
 .pfa-btn-alias {
-  background-color: var(--inset);
-  border-color: var(--border-strong);
-  color: var(--ink);
+  color: var(--mf-text-muted);
 }
 .pfa-btn-alias:hover,
 .pfa-btn-alias:focus {
-  background-color: var(--ink);
-  border-color: var(--ink);
-  color: var(--card);
+  background-color: var(--mf-ghost-hover);
+  color: var(--mf-text);
 }
 
-/* Delete (Excluir) — mARTdesign --danger (#e5372a) */
+/* Delete (Excluir) — Ghost limpo com vermelho semantico */
 .pfa-btn-delete {
-  background-color: var(--danger-soft);
-  border-color: var(--danger-border);
-  color: var(--danger-text);
+  color: var(--mf-red-text);
+  opacity: 0.78;
 }
 .pfa-btn-delete:hover,
 .pfa-btn-delete:focus {
-  background-color: var(--danger);
-  border-color: var(--danger);
+  opacity: 1;
+  background-color: var(--mf-red-soft);
+  color: var(--mf-red);
+}
+
+/* Vacation (Ferias) */
+.pfa-btn-vacation-on {
+  background-color: var(--mf-accent-soft);
+  color: var(--mf-accent);
+}
+.pfa-btn-vacation-on:hover {
+  background-color: var(--mf-accent);
   color: #ffffff;
 }
-
-/* Vacation (Ferias) — mARTdesign --accent quando ativo / neutro quando inativo */
-.pfa-btn-vacation-on {
-  background-color: var(--accent-soft);
-  border-color: var(--accent);
-  color: var(--accent-text);
-}
-.pfa-btn-vacation-on:hover,
-.pfa-btn-vacation-on:focus {
-  background-color: var(--accent);
-  border-color: var(--accent);
-  color: var(--on-accent);
-}
-
 .pfa-btn-vacation-off {
-  background-color: var(--inset);
-  border-color: var(--border-strong);
-  color: var(--body);
+  color: var(--mf-text-muted);
 }
-.pfa-btn-vacation-off:hover,
-.pfa-btn-vacation-off:focus {
-  background-color: var(--body);
-  border-color: var(--body);
-  color: var(--card);
+.pfa-btn-vacation-off:hover {
+  background-color: var(--mf-ghost-hover);
+  color: var(--mf-text);
 }
 
 /* ----------------------------------------------------------------------------
- * 10. Flat sharp quota bars (zero gradients, WCAG contrast in Creme & Carbono)
+ * 10. Clean MartFlow Quota Pills
  * ---------------------------------------------------------------------------- */
 .quota_bar {
   position: relative;
   display: inline-block;
   box-sizing: border-box;
-  min-width: 96px;
-  max-width: 132px;
+  min-width: 94px;
+  max-width: 130px;
   width: 100%;
-  height: 22px;
+  height: 24px;
   overflow: hidden;
-  background-color: var(--inset);
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius-none);
-  line-height: 20px;
+  background-color: var(--mf-table-head);
+  border: 1px solid var(--mf-border-subtle);
+  border-radius: 8px;
+  line-height: 22px;
   text-align: center;
   vertical-align: middle;
   white-space: nowrap;
@@ -1183,45 +1127,26 @@ body.page-password-change .footer {
   transition: width 200ms ease;
 }
 
-.quota_low {
-  background-color: var(--success-soft) !important;
-  border-right: 2px solid var(--success);
-}
-
-.quota_mid {
-  background-color: var(--warning-soft) !important;
-  border-right: 2px solid var(--warning);
-}
-
-.quota_high {
-  background-color: var(--danger-soft) !important;
-  border-right: 2px solid var(--danger);
-}
+.quota_low { background-color: var(--mf-green-soft) !important; border-right: 2px solid var(--mf-green); }
+.quota_mid { background-color: var(--mf-amber-soft) !important; border-right: 2px solid var(--mf-amber); }
+.quota_high { background-color: var(--mf-red-soft) !important; border-right: 2px solid var(--mf-red); }
 
 .quota_label {
   position: relative;
   z-index: 2;
   display: block;
-  height: 20px;
-  padding: 0 6px;
+  height: 22px;
+  padding: 0 7px;
   font-size: 11.5px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
-  color: var(--ink);
+  color: var(--mf-text);
   cursor: default;
 }
 
-.quota_text_low {
-  color: var(--success-text) !important;
-}
-
-.quota_text_mid {
-  color: var(--warning-text) !important;
-}
-
-.quota_text_high {
-  color: var(--danger-text) !important;
-}
+.quota_text_low { color: var(--mf-green-text) !important; }
+.quota_text_mid { color: var(--mf-amber-text) !important; }
+.quota_text_high { color: var(--mf-red-text) !important; }
 
 .quota_no_border {
   min-width: 0;
@@ -1235,96 +1160,440 @@ body.page-password-change .footer {
 .quota_no_border .quota_label {
   height: auto;
   padding: 0;
-  color: var(--body);
+  color: var(--mf-text-muted);
   font-weight: 500;
 }
 
 /* ----------------------------------------------------------------------------
- * 11. Virtual overview tab bar & viewlog details
+ * 11. MartFlow Forms (cadastro-fornecedor.html inspired — airy, single surface)
  * ---------------------------------------------------------------------------- */
-.pfa-tab-bar {
+.mf-form-wrap {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.mf-form-sheet {
+  background-color: var(--mf-surface);
+  border: 1px solid var(--mf-border);
+  border-radius: 16px;
+  box-shadow: var(--mf-shadow-sm);
+  overflow: hidden;
+}
+
+.mf-form-sheet-body {
+  padding: 28px 32px;
+}
+
+.mf-form-sheet-footer {
+  padding: 16px 32px;
+  background-color: var(--mf-surface-subtle);
+  border-top: 1px solid var(--mf-border-subtle);
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.mf-form-sheet .form-group {
+  margin-bottom: 20px;
+}
+
+.mf-form-sheet .control-label {
+  color: var(--mf-text);
   font-size: 13px;
-}
-
-.pfa-tab-bar > span:first-child {
-  color: var(--body);
-  font-family: var(--font-display);
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-right: 4px;
-}
-
-.pfa-tab-bar a,
-.pfa-tab-bar span.active {
-  display: inline-block;
-  padding: 5px 14px;
-  border-radius: var(--radius-none);
-  text-decoration: none;
-  border: 1px solid var(--border-strong);
-  font-family: var(--font-display);
-  font-size: 12.5px;
   font-weight: 600;
-  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+  text-align: left;
+  padding-top: 9px;
 }
 
-.pfa-tab-bar a {
-  color: var(--body);
-  background-color: var(--inset);
-}
-
-.pfa-tab-bar a:hover {
-  color: var(--ink);
-  border-color: var(--accent);
-}
-
-.pfa-tab-bar span.active {
-  color: var(--on-accent);
-  background-color: var(--accent);
-  border-color: var(--accent);
-}
-
-.panel > .table-responsive {
-  border: 0;
+.mf-form-sheet .help-block {
+  color: var(--mf-text-muted);
+  font-size: 12px;
+  margin-top: 5px;
   margin-bottom: 0;
 }
 
-/* Search highlight */
-.searchresult {
-  background-color: var(--accent-soft);
-  color: var(--accent-text);
-  padding: 0 2px;
-  font-weight: 600;
+.mf-form-sheet .has-error .help-block {
+  color: var(--mf-red-text);
+  font-weight: 500;
 }
 
-/* Details toggle in viewlog */
-#log_table summary {
-  cursor: pointer;
-  color: var(--accent-text);
+.mf-form-sheet .has-error .form-control {
+  border-color: var(--mf-red) !important;
+}
+
+.mf-form-sheet .form-control-static {
+  color: var(--mf-text);
+  font-weight: 600;
+  padding-top: 9px;
+}
+
+@media (max-width: 767px) {
+  .mf-form-sheet-body { padding: 20px; }
+  .mf-form-sheet-footer { padding: 14px 20px; }
 }
 
 /* ----------------------------------------------------------------------------
- * 12. Brand footer (positive logo on Creme, negative logo on Carbono)
+ * 12. Dashboard (/main) — MartFlow Entity-list style quick navigation
  * ---------------------------------------------------------------------------- */
-.footer {
-  background-color: var(--panel);
-  border-top: 1px solid var(--border-strong);
-  color: var(--body);
-  height: auto;
-  min-height: 54px;
-  line-height: 1.4;
-  padding: 12px 0;
+.mf-nav-list {
+  display: flex;
+  flex-direction: column;
 }
 
-.footer > .container {
-  width: 96% !important;
-  max-width: 1480px;
+.mf-nav-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  text-decoration: none !important;
+  color: var(--mf-text);
+  border-top: 1px solid var(--mf-divide);
+  transition: background-color 150ms ease;
+}
+
+.mf-nav-row:first-child {
+  border-top: 0;
+}
+
+.mf-nav-row:hover {
+  background-color: var(--mf-row-hover);
+}
+
+.mf-nav-row-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.mf-nav-tile {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background-color: var(--mf-table-head);
+  color: var(--mf-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+.mf-nav-row:hover .mf-nav-tile {
+  background-color: var(--mf-accent-soft);
+  color: var(--mf-accent);
+}
+
+.mf-nav-tile svg,
+.mf-nav-arrow {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.mf-nav-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--mf-text);
+  line-height: 1.3;
+}
+
+.mf-nav-desc {
+  font-size: 12.5px;
+  color: var(--mf-text-muted);
+  margin-top: 2px;
+}
+
+.mf-nav-arrow {
+  color: var(--mf-text-label);
+  flex-shrink: 0;
+  transition: transform 150ms ease, color 150ms ease;
+}
+
+.mf-nav-row:hover .mf-nav-arrow {
+  color: var(--mf-accent);
+  transform: translateX(3px);
+}
+
+/* ----------------------------------------------------------------------------
+ * 13. Viewlog pagination & status legend
+ * ---------------------------------------------------------------------------- */
+.mf-pagination-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.mf-status-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  font-size: 12px;
+  color: var(--mf-text-muted);
+}
+
+.mf-status-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.searchresult {
+  background-color: var(--mf-accent-soft);
+  color: var(--mf-accent);
+  padding: 0 3px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+#log_table summary {
+  cursor: pointer;
+  color: var(--mf-accent);
+  font-weight: 500;
+}
+
+/* ----------------------------------------------------------------------------
+ * 14. Seamless MartFlow styling for secondary Bootstrap .panel templates
+ *     (totp.tpl, app-passwords.tpl, totp-exceptions.tpl, vacation.tpl, users_*)
+ * ---------------------------------------------------------------------------- */
+.mf-main > .panel,
+.mf-main > form > .panel {
+  margin: 24px;
+  background-color: var(--mf-surface);
+  border: 1px solid var(--mf-border);
+  border-radius: 16px !important;
+  box-shadow: var(--mf-shadow-sm);
+  overflow: hidden;
+}
+
+.panel-default > .panel-heading {
+  background-color: var(--mf-surface-subtle);
+  border-bottom: 1px solid var(--mf-border-subtle);
+  color: var(--mf-text);
+  padding: 16px 24px;
+}
+
+.panel-default > .panel-heading h4 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--mf-text);
+}
+
+.panel-body {
+  background-color: var(--mf-surface);
+  color: var(--mf-text);
+  padding: 24px;
+}
+
+.panel-footer {
+  background-color: var(--mf-surface-subtle);
+  border-top: 1px solid var(--mf-border-subtle);
+  padding: 14px 24px;
+}
+
+/* ----------------------------------------------------------------------------
+ * 15. Login & Recovery — Deep Carbono (#0d0d0d) + Quadrant Symbol + MartFlow Card
+ * ---------------------------------------------------------------------------- */
+body.page-login,
+body.page-login-mfa,
+body.page-password-recover,
+body.page-password-change {
+  background-color: #0d0d0d !important;
+  color: #fcf9e0 !important;
+  position: relative;
+  overflow-x: hidden;
+  --mf-page: #0d0d0d;
+  --mf-header: #161616;
+  --mf-panel: #1a1a1a;
+  --mf-surface: #161616;
+  --mf-input-bg: #111111;
+  --mf-border: #2a2a2a;
+  --mf-border-subtle: #2a2a2a;
+  --mf-text: #fcf9e0;
+  --mf-text-body: #a09880;
+  --mf-text-muted: #a09880;
+  --mf-text-label: #a09880;
+  color-scheme: dark;
+}
+
+body.page-login::before,
+body.page-login-mfa::before,
+body.page-password-recover::before,
+body.page-password-change::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("../images/brand/pontos-hex-carbono.svg");
+  background-repeat: no-repeat;
+  background-position: left top;
+  background-size: 760px auto;
+  opacity: 0.4;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body.page-login::after,
+body.page-login-mfa::after,
+body.page-password-recover::after,
+body.page-password-change::after {
+  content: "";
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  width: 70vw;
+  max-width: 960px;
+  height: 70vh;
+  max-height: 620px;
+  background-image: url("../images/brand/simbolo-inf-dir-carbono.svg");
+  background-repeat: no-repeat;
+  background-position: right bottom;
+  background-size: contain;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body.page-login .mf-main,
+body.page-login-mfa .mf-main,
+body.page-password-recover .mf-main,
+body.page-password-change .mf-main {
+  position: relative;
+  z-index: 1;
+  justify-content: center;
+  padding-top: 72px;
+  padding-bottom: 36px;
+}
+
+body.page-login .mf-logo-pos,
+body.page-login-mfa .mf-logo-pos,
+body.page-password-recover .mf-logo-pos,
+body.page-password-change .mf-logo-pos { display: none !important; }
+
+body.page-login .mf-logo-neg,
+body.page-login-mfa .mf-logo-neg,
+body.page-password-recover .mf-logo-neg,
+body.page-password-change .mf-logo-neg { display: block !important; }
+
+div#login {
+  max-width: 440px !important;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+div#login .pfa-login-header {
+  margin-bottom: 18px;
+}
+
+.pfa-brand-zigzag {
+  display: block;
+  width: 48px;
+  height: 12px;
+  margin-bottom: 10px;
+}
+
+div#login .pfa-login-eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #a09880;
+  margin: 0 0 6px 0;
+}
+
+div#login h2.h2 {
+  font-family: var(--mf-font-sans);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+  color: #fcf9e0;
+  margin: 0;
+}
+
+div#login .well {
+  background-color: #161616;
+  border: 1px solid #2a2a2a;
+  border-radius: 16px !important;
+  padding: 28px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.55);
+}
+
+div#login label {
+  color: #a09880;
+  font-size: 12.5px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+div#login .form-control {
+  background-color: #0d0d0d;
+  border-color: #2a2a2a;
+  color: #fcf9e0;
+  height: 44px;
+}
+
+div#login .btn-primary.btn-lg {
+  width: 100%;
+  min-height: 46px;
+  font-size: 14px;
+  border-radius: 12px !important;
+  margin-top: 6px;
+}
+
+div#login .reset-button {
+  width: 100%;
+  margin-left: 0;
+}
+
+div#login .reset-button .btn-default {
+  width: 100%;
+  background-color: #1e1e1e !important;
+  border-color: #2a2a2a !important;
+  color: #a09880 !important;
+}
+
+div#login .pfa-login-alt {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid #2a2a2a;
+  text-align: center;
+  font-size: 13px;
+}
+
+div#login .pfa-login-alt a {
+  color: var(--mf-accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+div#login .pfa-login-alt a:hover {
+  text-decoration: underline;
+}
+
+/* ----------------------------------------------------------------------------
+ * 16. Minimalist Full-bleed Footer (synced with Creme & Carbono)
+ * ---------------------------------------------------------------------------- */
+.footer {
+  position: static;
+  flex-shrink: 0;
+  width: 100%;
+  background-color: var(--mf-header);
+  border-top: 1px solid var(--mf-border);
+  color: var(--mf-text-muted);
+  height: auto;
+  line-height: 1.4;
+  padding: 12px 24px;
+  z-index: 1;
 }
 
 .pfa-footer-inner {
@@ -1333,6 +1602,7 @@ body.page-password-change .footer {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  width: 100%;
 }
 
 .pfa-footer-brand {
@@ -1341,40 +1611,24 @@ body.page-password-change .footer {
 }
 
 .pfa-footer-brand img {
-  height: 26px;
+  height: 22px;
   width: auto;
   display: block;
 }
 
-.pfa-footer-logo-neg {
-  display: none !important;
-}
-
-[data-theme="carbono"] .pfa-footer-logo-pos,
-body.page-login .pfa-footer-logo-pos,
-body.page-login-mfa .pfa-footer-logo-pos,
-body.page-password-recover .pfa-footer-logo-pos,
-body.page-password-change .pfa-footer-logo-pos {
-  display: none !important;
-}
-
-[data-theme="carbono"] .pfa-footer-logo-neg,
-body.page-login .pfa-footer-logo-neg,
-body.page-login-mfa .pfa-footer-logo-neg,
-body.page-password-recover .pfa-footer-logo-neg,
-body.page-password-change .pfa-footer-logo-neg {
-  display: block !important;
-}
-
 .pfa-footer-meta {
   font-size: 12px;
-  color: var(--body);
-  text-align: right;
+  color: var(--mf-text-muted);
 }
 
 .pfa-footer-meta a {
-  color: var(--accent-text);
+  color: var(--mf-accent);
   font-weight: 500;
+  text-decoration: none;
+}
+
+.pfa-footer-meta a:hover {
+  text-decoration: underline;
 }
 
 .pfa-footer-sep {
