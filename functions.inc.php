@@ -1425,8 +1425,20 @@ function smtp_mail($to, $from, $data, $password = "", $body = "")
 
     if ($body != "") {
         $clean_subject = trim(preg_replace('/[\r\n]+/', ' ', (string)$data));
-        if (strip_tags($body) !== $body) {
-            list($mime_headers, $mime_body) = build_multipart_message(strip_tags($body), $body);
+        $is_full_html = (preg_match('/<!doctype\s+html|<html\b/i', $body) === 1);
+
+        if ($is_full_html) {
+            $html_body = $body;
+        } else {
+            $is_html_fragment = (strip_tags($body) !== $body);
+            $html_fragment = format_email_body_html($body, $is_html_fragment);
+            $wrapped = build_html_from_template($html_fragment, $clean_subject);
+            $html_body = ($wrapped !== false) ? $wrapped : ($is_html_fragment ? $body : '');
+        }
+
+        if ($html_body !== '') {
+            $plain_body = html_to_plain_text($html_body);
+            list($mime_headers, $mime_body) = build_multipart_message($plain_body, $html_body);
             $maildata =
                 "To: " . $to . "\r\n"
                 . "From: " . $from . "\r\n"
@@ -1576,6 +1588,93 @@ function build_html_from_template(string $html_fragment, string $subject = '')
     );
 
     return str_replace(array_keys($replacements), array_values($replacements), $template);
+}
+
+/**
+ * Convert plain text into safe HTML paragraphs/line breaks with clickable http(s) links,
+ * or preserve an existing HTML fragment as-is.
+ *
+ * @param string $content
+ * @param bool   $already_html
+ * @return string
+ */
+function format_email_body_html(string $content, bool $already_html = false): string
+{
+    $content = mb_convert_encoding($content, 'UTF-8', 'UTF-8');
+    if ($already_html) {
+        return $content;
+    }
+
+    $normalized = str_replace(array("\r\n", "\r"), "\n", trim($content));
+    if ($normalized === '') {
+        return '';
+    }
+
+    $paragraphs = preg_split('/\n{2,}/', $normalized);
+    if (!is_array($paragraphs)) {
+        $paragraphs = array($normalized);
+    }
+
+    $html_parts = array();
+    foreach ($paragraphs as $para) {
+        $escaped = htmlspecialchars($para, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $escaped = (string)preg_replace_callback(
+            '~(https?://[^\s<>"\']+)~i',
+            static function (array $m): string {
+                $url = $m[1];
+                $trail = '';
+                while ($url !== '' && preg_match('/[.,;:!?)]$/', $url)) {
+                    $trail = substr($url, -1) . $trail;
+                    $url = substr($url, 0, -1);
+                }
+                if ($url === '') {
+                    return $m[1];
+                }
+                return '<a href="' . $url . '" style="color: #a83010; text-decoration: underline; word-break: break-all;">' . $url . '</a>' . $trail;
+            },
+            $escaped
+        );
+        $html_parts[] = '<p style="margin: 0 0 14px 0;">' . nl2br($escaped, false) . '</p>';
+    }
+
+    return implode("\n", $html_parts);
+}
+
+/**
+ * Convert HTML content into clean, readable plain text for multipart/alternative fallback.
+ *
+ * @param string $html
+ * @return string
+ */
+function html_to_plain_text(string $html): string
+{
+    $text = mb_convert_encoding($html, 'UTF-8', 'UTF-8');
+    $text = (string)preg_replace('#<(head|style|script)\b[^>]*>.*?</\1>#is', '', $text);
+    $text = (string)preg_replace_callback(
+        '#<a\b[^>]*href=["\']([^"\']+)["\'][^>]*>(.*?)</a>#is',
+        static function (array $m): string {
+            $href = trim(html_entity_decode($m[1], ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+            $label = trim((string)preg_replace('/\s+/', ' ', strip_tags(html_entity_decode($m[2], ENT_QUOTES | ENT_HTML5, 'UTF-8'))));
+            if ($label === '') {
+                return '';
+            }
+            if ($label === $href || stripos($href, 'mailto:') === 0) {
+                return $label;
+            }
+            return $label . ' (' . $href . ')';
+        },
+        $text
+    );
+    $text = (string)preg_replace('#<br\s*/?>#i', "\n", $text);
+    $text = (string)preg_replace('#</(?:p|div|h[1-6]|tr|li|table)>#i', "\n", $text);
+    $text = strip_tags($text);
+    $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $text = str_replace(array("\r\n", "\r"), "\n", $text);
+    $lines = array_map('trim', explode("\n", $text));
+    $text = implode("\n", $lines);
+    $text = (string)preg_replace("/\n{3,}/", "\n\n", $text);
+
+    return trim($text);
 }
 
 /**

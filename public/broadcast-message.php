@@ -85,14 +85,22 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                 $vars = fetch_user_and_domain_vars($fTo);
                 $is_html = (strip_tags($raw_message) !== $raw_message);
                 $filled_fragment = apply_placeholders($raw_message, $vars, $is_html);
+                $html_fragment = format_email_body_html($filled_fragment, $is_html);
                 $msg_id = '<' . sprintf('%.6f', microtime(true)) . '-' . md5($smtp_from_email . $fTo) . "@{$serverName}>";
 
-                if ($is_html) {
-                    $final_html = build_html_from_template($filled_fragment, $clean_subject);
-                    if ($final_html === false) {
-                        $final_html = $filled_fragment;
-                    }
-                    list($mime_headers, $mime_body) = build_multipart_message(strip_tags($final_html), $final_html);
+                $final_html = build_html_from_template($html_fragment, $clean_subject);
+                if ($final_html !== false) {
+                    list($mime_headers, $mime_body) = build_multipart_message(html_to_plain_text($final_html), $final_html);
+
+                    $fHeaders  = 'To: ' . $fTo . "\r\n";
+                    $fHeaders .= 'From: ' . $b_name . ' <' . $smtp_from_email . ">\r\n";
+                    $fHeaders .= 'Subject: ' . $b_subject . "\r\n";
+                    $fHeaders .= 'Date: ' . date('r') . "\r\n";
+                    $fHeaders .= 'Message-ID: ' . $msg_id . "\r\n";
+                    $fHeaders .= rtrim($mime_headers, "\r\n") . "\r\n\r\n";
+                    $fHeaders .= $mime_body;
+                } elseif ($is_html) {
+                    list($mime_headers, $mime_body) = build_multipart_message(html_to_plain_text($filled_fragment), $filled_fragment);
 
                     $fHeaders  = 'To: ' . $fTo . "\r\n";
                     $fHeaders .= 'From: ' . $b_name . ' <' . $smtp_from_email . ">\r\n";

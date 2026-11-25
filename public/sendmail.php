@@ -75,13 +75,10 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $vars = fetch_user_and_domain_vars($fTo);
         $is_html = (strip_tags($raw_body) !== $raw_body);
         $filled_fragment = apply_placeholders($raw_body, $vars, $is_html);
+        $html_fragment = format_email_body_html($filled_fragment, $is_html);
 
-        if ($is_html) {
-            $tBody = build_html_from_template($filled_fragment, $fSubject);
-            if ($tBody === false) {
-                $tBody = $filled_fragment;
-            }
-        } else {
+        $tBody = build_html_from_template($html_fragment, $fSubject);
+        if ($tBody === false) {
             $tBody = $filled_fragment;
         }
 

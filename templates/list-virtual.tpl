@@ -1,9 +1,10 @@
 {assign var="file" value=$smarty.config.url_list_virtual}
 {if isset($search._)}
-    {assign var="searchsuffix" value="&amp;search[_]={$search._}"}
+    {assign var="searchsuffix" value="&amp;search[_]={$search._|escape:"url"}"}
 {else}
     {assign var="searchsuffix" value=""}
 {/if}
+{assign var="tab_domain_url" value=$smarty.get.domain|default:$fDomain|escape:"url"}
 
 <div id="overview" class="mf-page-header">
     <div class="mf-page-header-left">
@@ -43,21 +44,21 @@
 <div class="mf-tab-strip">
     <div class="mf-tabs">
         {if $tab=='all'}<span class="mf-tab-active">{$PALANG.all}</span>
-        {else}<a class="mf-tab" href="?domain={$smarty.get.domain}&amp;tab=all{$searchsuffix}">{$PALANG.all}</a>{/if}
+        {else}<a class="mf-tab" href="?domain={$tab_domain_url}&amp;tab=all{$searchsuffix}">{$PALANG.all}</a>{/if}
 
         {if $tab=='mailbox'}<span class="mf-tab-active">{$PALANG.pOverview_mailbox_title}</span>
-        {else}<a class="mf-tab" href="?domain={$smarty.get.domain}&amp;tab=mailbox{$searchsuffix}">{$PALANG.pOverview_mailbox_title}</a>{/if}
+        {else}<a class="mf-tab" href="?domain={$tab_domain_url}&amp;tab=mailbox{$searchsuffix}">{$PALANG.pOverview_mailbox_title}</a>{/if}
 
         {if $tab=='alias'}<span class="mf-tab-active">{$PALANG.pOverview_alias_title}</span>
-        {else}<a class="mf-tab" href="?domain={$smarty.get.domain}&amp;tab=alias{$searchsuffix}">{$PALANG.pOverview_alias_title}</a>{/if}
+        {else}<a class="mf-tab" href="?domain={$tab_domain_url}&amp;tab=alias{$searchsuffix}">{$PALANG.pOverview_alias_title}</a>{/if}
 
         {if $boolconf_alias_domain}
             {if $tab=='alias_domain'}<span class="mf-tab-active">{$PALANG.pOverview_alias_domain_title}</span>
-            {else}<a class="mf-tab" href="?domain={$smarty.get.domain}&amp;tab=alias_domain{$searchsuffix}">{$PALANG.pOverview_alias_domain_title}</a>{/if}
+            {else}<a class="mf-tab" href="?domain={$tab_domain_url}&amp;tab=alias_domain{$searchsuffix}">{$PALANG.pOverview_alias_domain_title}</a>{/if}
         {/if}
     </div>
     <div class="mf-page-header-actions">
-        <a role="button" class="mf-btn-secondary" href="list.php?table=mailbox&amp;output=csv&amp;domain={$domain_selected}">
+        <a role="button" class="mf-btn-secondary" href="list.php?table=mailbox&amp;output=csv&amp;domain={$domain_selected|escape:"url"}">
             <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             {$PALANG.download_csv}
         </a>

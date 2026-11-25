@@ -31,6 +31,14 @@ test -L "$self" && self="`readlink -f \"$self\"`"
 
 LIB="${self/%postfixadmin-cli/}"
 
-exec php -q "${LIB}postfixadmin-cli.php" "$@"
+if [ -n "${PHP_BIN:-}" ]; then
+    PHP_CMD="$PHP_BIN"
+elif command -v php8.3 >/dev/null 2>&1; then
+    PHP_CMD="$(command -v php8.3)"
+else
+    PHP_CMD="php"
+fi
+
+exec "$PHP_CMD" -q "${LIB}postfixadmin-cli.php" "$@"
 
 exit $?

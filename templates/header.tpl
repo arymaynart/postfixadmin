@@ -9,7 +9,7 @@
     {* see https://github.com/postfixadmin/postfixadmin/issues/497 *}
     <meta http-equiv='Content-Security-Policy' content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; "/>
 
-    <title>mARTdesign Mail Admin - {$smarty.server.HTTP_HOST}</title>
+    <title>mARTdesign Mail Admin - {$smarty.server.HTTP_HOST|escape:"html"}</title>
     <link rel="icon" type="image/svg+xml" href="{$CONF.theme_favicon}"/>
     <link rel="shortcut icon" href="{$CONF.theme_favicon}"/>
     {literal}<script>

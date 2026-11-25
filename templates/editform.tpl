@@ -74,15 +74,15 @@
                                                             {foreach from=$value_{$key} item=selectedDomain}
                                                                 {if $domain == $selectedDomain }
                                                                     <input type="checkbox" checked name="value[{$key}][]"
-                                                                           value="{$domain}" id="{$domain}_id"/>
-                                                                    <label for="{$domain}_id" style="font-weight:500;margin-left:6px;">{$domain}</label>
+                                                                           value="{$domain|escape:"html"}" id="{$domain|escape:"html"}_id"/>
+                                                                    <label for="{$domain|escape:"html"}_id" style="font-weight:500;margin-left:6px;">{$domain|escape:"html"}</label>
                                                                     {assign var=flag value=$flag+1}
                                                                 {/if}
                                                             {/foreach}
                                                             {if $flag == 0 }
-                                                                <input type="checkbox" name="value[{$key}][]" value="{$domain}"
-                                                                       id="{$domain}_id"/>
-                                                                <label for="{$domain}_id" style="font-weight:500;margin-left:6px;">{$domain}</label>
+                                                                <input type="checkbox" name="value[{$key}][]" value="{$domain|escape:"html"}"
+                                                                       id="{$domain|escape:"html"}_id"/>
+                                                                <label for="{$domain|escape:"html"}_id" style="font-weight:500;margin-left:6px;">{$domain|escape:"html"}</label>
                                                             {/if}
                                                         </li>
                                                     {/foreach}
