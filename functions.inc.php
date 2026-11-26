@@ -782,6 +782,18 @@ function list_admins()
 //
 function encode_header($string, $default_charset = "utf-8")
 {
+    // Fork: for UTF-8 (the only charset smtp_mail() uses) let mbstring build the
+    // encoded-words. The legacy encoder below closes a long encoded-word in the
+    // middle of a word ("...mA?=RTdesign"), which RFC 2047 forbids (strict clients
+    // show it raw) and leaves lines over 78 chars. Pure ASCII stays untouched, as
+    // before. The only callers are Subject headers, hence the indent of 9.
+    if (strtolower($default_charset) === 'utf-8' && function_exists('mb_encode_mimeheader')) {
+        if (!preg_match('/[\x80-\xFF]/', (string) $string)) {
+            return $string;
+        }
+        return mb_encode_mimeheader((string) $string, 'UTF-8', 'Q', "\r\n ", 9);
+    }
+
     if (strtolower($default_charset) == 'iso-8859-1') {
         $string = str_replace("\240", ' ', $string);
     }
