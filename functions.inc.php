@@ -1591,11 +1591,19 @@ function build_multipart_message(string $text_plain, string $html_body): array
 /**
  * Wrap an HTML fragment into templates/email_base.html with escaped subject.
  *
+ * Fork: the template is full width (header, content and footer edge to edge,
+ * 40 px inner padding, 20 px on phones). The personal signature
+ * (templates/email_signature.html) goes right after the message body only in
+ * messages sent by hand from the panel (sendmail, broadcast); automatic mails
+ * (password recovery, welcome) leave the slot empty. Template images live on
+ * estatico.martdesign.com.br, never on the mail server.
+ *
  * @param string $html_fragment
  * @param string $subject
+ * @param bool   $with_signature
  * @return string|false
  */
-function build_html_from_template(string $html_fragment, string $subject = '')
+function build_html_from_template(string $html_fragment, string $subject = '', bool $with_signature = false)
 {
     $template_file = __DIR__ . '/templates/email_base.html';
     if (!is_file($template_file)) {
@@ -1612,12 +1620,25 @@ function build_html_from_template(string $html_fragment, string $subject = '')
     $subject = mb_convert_encoding($subject, 'UTF-8', 'UTF-8');
     $subject_html = htmlspecialchars($subject, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
+    $signature = '';
+    if ($with_signature) {
+        $signature_file = __DIR__ . '/templates/email_signature.html';
+        $signature_html = is_file($signature_file) ? file_get_contents($signature_file) : false;
+        if ($signature_html === false) {
+            error_log("HTML email signature not found: $signature_file");
+        } else {
+            $signature = $signature_html;
+        }
+    }
+
     $replacements = array(
         '{{CORPO_MENSAGEM}}' => $html_fragment,
         '{{SUBJECT}}'        => $subject_html,
+        '{{ASSINATURA}}'     => $signature,
     );
 
-    return str_replace(array_keys($replacements), array_values($replacements), $template);
+    // strtr() replaces in one pass: placeholders typed inside the message body stay as text
+    return strtr($template, $replacements);
 }
 
 /**
@@ -1685,10 +1706,14 @@ function html_to_plain_text(string $html): string
         static function (array $m): string {
             $href = trim(html_entity_decode($m[1], ENT_QUOTES | ENT_HTML5, 'UTF-8'));
             $label = trim((string)preg_replace('/\s+/', ' ', strip_tags(html_entity_decode($m[2], ENT_QUOTES | ENT_HTML5, 'UTF-8'))));
+            // Fork: image-only links (social icons) keep their alt text as the label
+            if ($label === '' && preg_match('#<img\b[^>]*\balt=["\']([^"\']+)["\']#i', $m[2], $alt)) {
+                $label = trim(html_entity_decode($alt[1], ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+            }
             if ($label === '') {
                 return '';
             }
-            if ($label === $href || stripos($href, 'mailto:') === 0) {
+            if ($label === $href || stripos($href, 'mailto:') === 0 || stripos($href, 'tel:') === 0) {
                 return $label;
             }
             return $label . ' (' . $href . ')';
