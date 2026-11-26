@@ -671,7 +671,8 @@ abstract class PFAHandler
             $formatted_date = "TO_CHAR(###KEY###, '" . escape_string(Config::Lang('dateformat_pgsql')) . "')";
             # $base64_decode = "DECODE(###KEY###, 'base64')";
         } elseif (db_sqlite()) {
-            $formatted_date = "strftime(###KEY###, '" . escape_string(Config::Lang('dateformat_mysql')) . "')";
+            # SQLite: strftime(format, time) - the arguments were swapped, so the column came out empty
+            $formatted_date = "strftime('" . escape_string(Config::Lang('dateformat_mysql')) . "', ###KEY###)";
             # $base64_decode = "base64_decode(###KEY###)";
         } else {
             $formatted_date = "DATE_FORMAT(###KEY###, '" . escape_string(Config::Lang('dateformat_mysql')) . "')";
