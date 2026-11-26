@@ -1,6 +1,7 @@
 {if $table == 'domain'}{assign var="mf_section_label" value=$PALANG.pAdminMenu_domain}
 {elseif $table == 'admin'}{assign var="mf_section_label" value=$PALANG.pAdminMenu_admin}
 {elseif $table == 'mailbox'}{assign var="mf_section_label" value=$PALANG.pOverview_mailbox_title}
+{elseif $table == 'alias' && isset($forward_mode) && $forward_mode}{assign var="mf_section_label" value=$PALANG.pOverview_mailbox_title}
 {elseif $table == 'alias'}{assign var="mf_section_label" value=$PALANG.pOverview_alias_title}
 {elseif $table == 'aliasdomain'}{assign var="mf_section_label" value=$PALANG.pOverview_alias_domain_title}
 {elseif $table == 'fetchmail'}{assign var="mf_section_label" value=$PALANG.pMenu_fetchmail}

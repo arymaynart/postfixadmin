@@ -78,6 +78,7 @@ if ($formconf['listview'] == 'list-virtual.php') {
     $bits = [];
     $bits['domain'] = $_SESSION['list-virtual:domain'] ?? null;
     $bits['limit'] = $_SESSION['list-virtual:limit'] ?? null;
+    $bits['tab'] = list_virtual_tab_for_table((string) $table);
     header("Location: " . $formconf['listview'] . '?' . http_build_query(array_filter($bits)));
     exit(0);
 }

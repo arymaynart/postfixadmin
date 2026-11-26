@@ -548,6 +548,24 @@ function safesession($param, $default = "")
  * @param string $domain
  * @return array
  */
+/**
+ * mARTdesign: list-virtual.php shows one table per tab. Returns the tab that lists
+ * the given table, so create / edit / delete / (de)activate come back to it.
+ * A mailbox's own alias (its forwarding settings) belongs to the "mailbox" tab.
+ *
+ * @param string $table handler table name (mailbox, alias, aliasdomain)
+ * @param bool $is_mailbox_alias true when the alias is a mailbox's forwarding row
+ * @return string|null tab name, or null if the table is not shown in list-virtual
+ */
+function list_virtual_tab_for_table(string $table, bool $is_mailbox_alias = false): ?string
+{
+    if ($table === 'alias' && $is_mailbox_alias) {
+        return 'mailbox';
+    }
+    $tabs = array('mailbox' => 'mailbox', 'alias' => 'alias', 'aliasdomain' => 'alias_domain');
+    return $tabs[$table] ?? null;
+}
+
 function get_domain_properties($domain)
 {
     $handler = new DomainHandler();

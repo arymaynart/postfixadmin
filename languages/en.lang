@@ -245,6 +245,7 @@ $PALANG['pPassword_result_success'] = 'The password for %s has been changed.';
 
 $PALANG['pPassword_recovery_title'] = 'Follow the instructions to reset your password.';
 $PALANG['pPassword_recovery_button'] = 'Send me the code';
+$PALANG['pPassword_recovery_email_subject'] = 'Password reset · mARTdesign E-mail Service';
 $PALANG['pPassword_recovery_email_body'] = "Hello,\n\nUse the following link to change your email password :\n%s\n\nRegards,\n\n" . $CONF['admin_name'];
 $PALANG['pPassword_recovery_sms_body'] = "Hello,\nThe code to change your password is: %s\n" . $CONF['admin_name'];
 $PALANG['pPassword_recovery_processed'] = "We processed your request. If you entered a valid username, you'll receive an email/SMS with a password code.";
@@ -544,6 +545,34 @@ $PALANG['pEdit_mailbox_max_msg_mailsize_desc'] = 'Max message size in MB for thi
 $PALANG['pEdit_domain_max_msg_mailsize'] = 'Max message size';
 $PALANG['pEdit_domain_max_msg_mailsize_desc'] = 'Max message size in MB for this domain (0 = use server global | -1 = unlimited / server global limit)';
 $PALANG['pEdit_mailbox_max_msg_mailsize_error'] = 'Mailbox message size limit cannot exceed the domain limit (%s MB).';
+
+# mARTdesign UI (25/11/2026)
+$PALANG['pLogin_title'] = 'mARTdesign E-mail Service';
+$PALANG['pLogin_eyebrow_admin'] = 'E-mail Panel · Administration';
+$PALANG['pLogin_eyebrow_user'] = 'E-mail Panel · User';
+$PALANG['pFlash_close'] = 'Close notice';
+$PALANG['pList_alias_address'] = 'Alias';
+$PALANG['pList_alias_goto'] = 'Destinations';
+$PALANG['pForward_title'] = 'Forwarding';
+$PALANG['pForward_address'] = 'Mailbox';
+$PALANG['pForward_goto'] = 'Forward to';
+$PALANG['pForward_button'] = 'Forwarding: also send this mailbox\'s messages to other addresses';
+$PALANG['pOverview_forward_col'] = 'Forwarding';
+$PALANG['pOverview_forward_none'] = 'No forwarding';
+$PALANG['pOverview_forward_copy'] = 'Kept in the mailbox and also sent to:';
+$PALANG['pOverview_forward_only'] = 'Not kept in the mailbox, sent only to:';
+$PALANG['pOverview_search_label'] = 'Search';
+$PALANG['pOverview_domain_label'] = 'Domain';
+$PALANG['pAdminList_admin_domains'] = 'Domains';
+$PALANG['pAdminList_admin_domain_count'] = 'Domain count';
+$PALANG['pAdminList_admin_super'] = 'Superadmin';
+$PALANG['pAdminList_admin_all_domains'] = 'All';
+
+$PALANG['pPassword_recovery_heading'] = 'Reset your password';
+$PALANG['pPassword_change_heading'] = 'Create a new password';
+$PALANG['pPassword_back_to_login'] = 'Back to login';
+
+$PALANG['pLogin_eyebrow_generic'] = 'E-mail Panel';
 
 $PALANG['please_keep_this_as_last_entry'] = ''; # needed for language-check.sh
 /* vim: set expandtab ft=php softtabstop=3 tabstop=3 shiftwidth=3: */

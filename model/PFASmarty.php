@@ -93,7 +93,14 @@ class PFASmarty
 
         $CONF['theme_css'] = $rel_path . htmlentities($CONF['theme_css']);
         if (!empty($CONF['theme_custom_css'])) {
-            $CONF['theme_custom_css'] = $rel_path . htmlentities($CONF['theme_custom_css']);
+            $custom_css = (string) $CONF['theme_custom_css'];
+            $CONF['theme_custom_css'] = $rel_path . htmlentities($custom_css);
+            // Fork: nginx caches CSS for 30 days. The file date in the URL makes
+            // browsers fetch the new stylesheet right after a deploy.
+            $custom_css_file = __DIR__ . '/../public/' . ltrim($custom_css, '/');
+            if (strpos($custom_css, '?') === false && strpos($custom_css, '://') === false && is_file($custom_css_file)) {
+                $CONF['theme_custom_css'] .= '?v=' . filemtime($custom_css_file);
+            }
         }
         if (array_key_exists('theme_favicon', $CONF)) {
             $CONF['theme_favicon'] = $rel_path . htmlentities($CONF['theme_favicon']);

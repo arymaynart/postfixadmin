@@ -67,14 +67,14 @@ class AdminHandler extends PFAHandler
                 # TODO: Create them with the trunk version to avoid this problem.
             ),
 
-            'domains'          => self::pacol(1,          1,      0,      'list', 'domain'             , ''                  , array(), list_domains(),
+            'domains'          => self::pacol(1,          1,      1,      'list', 'pAdminList_admin_domains', ''             , array(), list_domains(),
                 /*not_in_db*/ 0,
                 /*dont_write_to_db*/ 1,
                 /*select*/ "coalesce(domains,'') as domains"
                 /*extrafrom set in domain_count*/
             ),
 
-            'domain_count'     => self::pacol(0,          0,      1,      'vnum', 'pAdminList_admin_count', ''               , '', array(),
+            'domain_count'     => self::pacol(0,          0,      1,      'vnum', 'pAdminList_admin_domain_count', ''        , '', array(),
                 /*not_in_db*/ 0,
                 /*dont_write_to_db*/ 1,
                 /*select*/ 'coalesce(__domain_count,0) as domain_count',
@@ -185,7 +185,8 @@ class AdminHandler extends PFAHandler
                 $db_result[$key]['domains'] = explode(',', $row['domains']);
             }
             if ($row['superadmin']) {
-                $db_result[$key]['domain_count'] = Config::lang('super_admin');
+                # mARTdesign: superadmins manage every domain (list shows a badge in 'domains')
+                $db_result[$key]['domain_count'] = Config::lang('pAdminList_admin_all_domains');
             }
         }
         return $db_result;

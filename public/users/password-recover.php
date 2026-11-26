@@ -71,7 +71,7 @@ function sendCodebyEmail($to, $username, $code, string $context = 'users')
 
     return smtp_mail($to,
         smtp_get_admin_email(false),
-        Config::Lang('pPassword_welcome'),
+        Config::Lang('pPassword_recovery_email_subject') ?: Config::Lang('pPassword_welcome'),
         Config::read('admin_smtp_password'),
         Config::lang_f('pPassword_recovery_email_body', $url));
 }
