@@ -548,6 +548,24 @@ function safesession($param, $default = "")
  * @param string $domain
  * @return array
  */
+/**
+ * mARTdesign: list-virtual.php shows one table per tab. Returns the tab that lists
+ * the given table, so create / edit / delete / (de)activate come back to it.
+ * A mailbox's own alias (its forwarding settings) belongs to the "mailbox" tab.
+ *
+ * @param string $table handler table name (mailbox, alias, aliasdomain)
+ * @param bool $is_mailbox_alias true when the alias is a mailbox's forwarding row
+ * @return string|null tab name, or null if the table is not shown in list-virtual
+ */
+function list_virtual_tab_for_table(string $table, bool $is_mailbox_alias = false): ?string
+{
+    if ($table === 'alias' && $is_mailbox_alias) {
+        return 'mailbox';
+    }
+    $tabs = array('mailbox' => 'mailbox', 'alias' => 'alias', 'aliasdomain' => 'alias_domain');
+    return $tabs[$table] ?? null;
+}
+
 function get_domain_properties($domain)
 {
     $handler = new DomainHandler();
@@ -782,6 +800,18 @@ function list_admins()
 //
 function encode_header($string, $default_charset = "utf-8")
 {
+    // Fork: for UTF-8 (the only charset smtp_mail() uses) let mbstring build the
+    // encoded-words. The legacy encoder below closes a long encoded-word in the
+    // middle of a word ("...mA?=RTdesign"), which RFC 2047 forbids (strict clients
+    // show it raw) and leaves lines over 78 chars. Pure ASCII stays untouched, as
+    // before. The only callers are Subject headers, hence the indent of 9.
+    if (strtolower($default_charset) === 'utf-8' && function_exists('mb_encode_mimeheader')) {
+        if (!preg_match('/[\x80-\xFF]/', (string) $string)) {
+            return $string;
+        }
+        return mb_encode_mimeheader((string) $string, 'UTF-8', 'Q', "\r\n ", 9);
+    }
+
     if (strtolower($default_charset) == 'iso-8859-1') {
         $string = str_replace("\240", ' ', $string);
     }

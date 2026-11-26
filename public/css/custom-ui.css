@@ -4,13 +4,49 @@
  * Full-bleed workspace architecture ported from MartFlow (Creme & Carbono):
  *   - Edge-to-edge topbar (h-14) + full-bleed page header + clean workspace
  *   - No redundant nested Bootstrap cards
- *   - Self-hosted Inter (300..800) & Comfortaa (300..700) — CSP 'self' safe
+ *   - Self-hosted Geomanist (400..700, text), Comfortaa (300..700, titles) and Inter (fallback) — CSP 'self' safe
  *   - Official mARTdesign SVG logos & Carbono quadrant pattern on login
  * ============================================================================ */
 
 /* ----------------------------------------------------------------------------
- * 1. Self-hosted Typography (Inter 300..800 + Comfortaa 300..700)
+ * 1. Self-hosted Typography (Geomanist 400..700 + Comfortaa 300..700 + Inter fallback)
  * ---------------------------------------------------------------------------- */
+/* Geomanist (atipo): brand text face. 400 Regular, 500 Book, 600 Medium,
+ * 700 Bold. The files are NOT in git (commercial font, public repository):
+ * they are copied to the server at deploy time; without them Inter takes over.
+ * Neither font has the arrows (U+2190, U+2192): those come from the system font. */
+@font-face {
+  font-family: "Geomanist";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/geomanist-400.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Geomanist";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("../fonts/geomanist-500.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Geomanist";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("../fonts/geomanist-600.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Geomanist";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("../fonts/geomanist-700.woff2") format("woff2");
+}
+
 @font-face {
   font-family: "Inter";
   font-style: normal;
@@ -78,6 +114,7 @@
   --mf-accent-secondary: #f47721;
   --mf-accent-soft: rgba(245, 71, 31, 0.10);
   --mf-accent-border: rgba(245, 71, 31, 0.25);
+  --mf-accent-text: #a83010;
 
   --mf-green: #16a34a;
   --mf-green-text: #15803d;
@@ -90,13 +127,13 @@
   --mf-amber-border: rgba(217, 119, 6, 0.30);
 
   --mf-red: #dc2626;
-  --mf-red-text: #dc2626;
+  --mf-red-text: #b91c1c;
   --mf-red-soft: #fef2f2;
   --mf-red-border: #fecaca;
 
   --mf-shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px -1px rgba(0, 0, 0, 0.06);
   --mf-shadow-dropdown: 0 12px 28px -4px rgba(26, 26, 26, 0.14);
-  --mf-font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --mf-font-sans: "Geomanist", "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
   --mf-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   color-scheme: light;
 }
@@ -128,6 +165,7 @@
   --mf-accent-secondary: #f47721;
   --mf-accent-soft: rgba(245, 71, 31, 0.14);
   --mf-accent-border: rgba(245, 71, 31, 0.32);
+  --mf-accent-text: #ff6a3d;
 
   --mf-green: #22c55e;
   --mf-green-text: #86efac;
@@ -247,8 +285,8 @@ a:focus {
 
 .mf-topbar .container-fluid {
   width: 100%;
-  padding-left: 20px;
-  padding-right: 20px;
+  padding-left: 24px;
+  padding-right: 24px;
   min-height: 56px;
 }
 
@@ -259,6 +297,8 @@ a:focus {
 }
 
 .mf-topbar .navbar-brand {
+  order: -1;
+  margin-left: 0 !important;
   height: 56px;
   padding: 10px 18px 10px 0 !important;
   display: flex;
@@ -406,7 +446,47 @@ a:focus {
   background-color: var(--mf-text-body);
 }
 
-@media (max-width: 991px) {
+/* The full superadmin menu needs ~1000 px on one line: below 1100 px it collapses
+   into the hamburger (Bootstrap only does that below 768 px, so 768–1099 is forced here) */
+@media (min-width: 768px) and (max-width: 1099px) {
+  .mf-topbar .navbar-header {
+    float: none;
+  }
+  .mf-topbar .navbar-toggle {
+    display: block;
+  }
+  .mf-topbar .navbar-collapse.collapse {
+    display: none !important;
+  }
+  .mf-topbar .navbar-collapse.collapse.in,
+  .mf-topbar .navbar-collapse.collapsing {
+    display: block !important;
+    max-height: calc(100vh - 56px);
+    overflow-y: auto !important;
+  }
+  .mf-topbar .navbar-nav,
+  .mf-topbar .navbar-right {
+    float: none !important;
+    margin: 0;
+  }
+  .mf-topbar .navbar-nav > li {
+    float: none;
+  }
+  .mf-topbar .navbar-nav .open .dropdown-menu {
+    position: static;
+    float: none;
+    width: auto;
+    margin-top: 0;
+    box-shadow: none;
+  }
+  .container-fluid > .navbar-header,
+  .container-fluid > .navbar-collapse {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+@media (max-width: 1099px) {
   .mf-topbar.navbar-default { height: auto; }
   .mf-topbar .navbar-collapse {
     background-color: var(--mf-header);
@@ -451,7 +531,7 @@ a:focus {
 }
 
 .mf-eyebrow {
-  font-size: 10px;
+  font-size: 10.5px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -470,9 +550,9 @@ a:focus {
 }
 
 .mf-page-title {
-  font-family: var(--mf-font-sans);
+  font-family: var(--mf-font-display);
   font-size: 24px;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: -0.025em;
   color: var(--mf-text);
   margin: 0;
@@ -661,12 +741,12 @@ a:focus {
   gap: 4px;
   border-radius: 6px;
   padding: 3px 8px;
-  font-size: 10.5px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  letter-spacing: 0;
+  text-transform: none;
   background-color: var(--mf-accent-soft);
-  color: var(--mf-accent);
+  color: var(--mf-text); /* orange 11 px text on the soft accent was 2.5:1 */
   white-space: nowrap;
 }
 
@@ -734,6 +814,39 @@ select[multiple].form-control {
   align-items: center;
   gap: 8px;
   margin: 0;
+}
+
+.mf-header-control #q {
+  width: 280px;
+  max-width: 100%;
+}
+
+@media (max-width: 767px) {
+  .mf-page-header-actions,
+  .mf-header-control,
+  .mf-header-control form {
+    width: 100%;
+  }
+
+  .mf-header-control #q,
+  .mf-header-control form .form-control {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto;
+  }
+
+  /* 44 px touch targets, like the filter bar */
+  .mf-header-control .form-control,
+  .mf-header-control select,
+  .mf-header-control button {
+    min-height: 44px;
+    height: 44px;
+  }
+
+  .mf-page-header-actions .mf-btn-primary,
+  .mf-page-header-actions .mf-btn-secondary {
+    min-height: 44px;
+  }
 }
 
 .mf-header-control .form-control,
@@ -804,6 +917,102 @@ select[multiple].form-control {
   padding: 0;
 }
 
+/* Every notice: close button (44 px target) and a short exit; "auto" notices leave after 5 s */
+.mf-flash {
+  position: relative;
+  min-height: 44px;
+  padding-right: 60px;
+  transition: opacity 200ms ease, transform 200ms ease;
+}
+
+.mf-flash--leaving {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+
+.mf-flash-close {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  width: 44px;
+  height: 44px;
+  margin-top: -22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  opacity: 0.8;
+  cursor: pointer;
+  transition: opacity 150ms ease, background-color 150ms ease;
+}
+
+.mf-flash-close:hover,
+.mf-flash-close:focus-visible {
+  opacity: 1;
+  background-color: rgba(26, 26, 26, 0.07);
+}
+
+[data-theme="carbono"] .mf-flash-close:hover,
+[data-theme="carbono"] .mf-flash-close:focus-visible {
+  background-color: rgba(252, 249, 224, 0.09);
+}
+
+.mf-flash-close svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.mf-flash-stack {
+  position: fixed;
+  top: 56px;
+  left: 0;
+  right: 0;
+  z-index: 1020;
+  /* Opaque base: the notice colors are translucent and the stack floats over the page */
+  background-color: var(--mf-page);
+  box-shadow: 0 10px 24px -12px rgba(26, 26, 26, 0.28);
+}
+
+.mf-flash-stack--footer {
+  position: sticky;
+  top: auto;
+  bottom: 0;
+  z-index: 2;
+  box-shadow: 0 -10px 24px -14px rgba(26, 26, 26, 0.28);
+}
+
+/* Login pages have no title bar: the notice sits on top of the footer */
+body.page-login .mf-flash,
+body.page-login-mfa .mf-flash,
+body.page-password-recover .mf-flash,
+body.page-password-change .mf-flash {
+  z-index: 1;
+  border-bottom: 0;
+  border-top: 1px solid var(--mf-border);
+}
+
+body.page-login .mf-flash-error,
+body.page-login-mfa .mf-flash-error,
+body.page-password-recover .mf-flash-error,
+body.page-password-change .mf-flash-error {
+  border-top-color: var(--mf-red-border);
+}
+
+body.page-login .mf-flash--leaving,
+body.page-login-mfa .mf-flash--leaving,
+body.page-password-recover .mf-flash--leaving,
+body.page-password-change .mf-flash--leaving {
+  transform: translateY(6px);
+}
+
 /* Search filter chips strip */
 .mf-search-chips {
   display: flex;
@@ -866,7 +1075,7 @@ select[multiple].form-control {
   background-color: var(--mf-table-head);
   color: var(--mf-text-label);
   font-family: var(--mf-font-sans);
-  font-size: 10.5px;
+  font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.09em;
@@ -903,16 +1112,22 @@ select[multiple].form-control {
   background-color: var(--mf-row-hover);
 }
 
-#admin_table td.list-col-domain a,
+#admin_table td a:not(.pfa-action-btn):not(.btn),
 #mailbox_table td a:not(.pfa-action-btn):not(.btn) {
   color: var(--mf-text);
   font-weight: 600;
   text-decoration: none;
 }
 
-#admin_table td.list-col-domain a:hover,
-#mailbox_table td a:not(.pfa-action-btn):not(.btn):hover {
-  color: var(--mf-accent);
+#admin_table td a:not(.pfa-action-btn):not(.btn):hover,
+#admin_table td a:not(.pfa-action-btn):not(.btn):focus,
+#mailbox_table td a:not(.pfa-action-btn):not(.btn):hover,
+#mailbox_table td a:not(.pfa-action-btn):not(.btn):focus {
+  color: var(--mf-text);
+  text-decoration: underline;
+  text-decoration-color: var(--mf-accent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
 }
 
 /* Domain column widths — balanced for desktop without forced horizontal scroll */
@@ -942,6 +1157,12 @@ select[multiple].form-control {
 #admin_table th.list-col-password_expiry,
 #admin_table td.list-col-password_expiry { width: 72px; text-align: center; color: var(--mf-text-body); }
 
+/* Headers keep the label colour of the other headers; only the cells are body text */
+#admin_table > thead > tr > th.list-col-description,
+#admin_table > thead > tr > th.list-col-transport,
+#admin_table > thead > tr > th.list-col-backupmx,
+#admin_table > thead > tr > th.list-col-password_expiry { color: var(--mf-text-label); }
+
 #admin_table th.list-col-active,
 #admin_table td.list-col-active,
 #mailbox_table th.list-col-active,
@@ -952,6 +1173,9 @@ select[multiple].form-control {
   width: 96px;
   text-align: center;
   white-space: nowrap;
+}
+
+#admin_table td.list-col-modified {
   color: var(--mf-text-muted);
   font-size: 12px;
   font-variant-numeric: tabular-nums;
@@ -1219,6 +1443,18 @@ select[multiple].form-control {
   padding-top: 9px;
 }
 
+/* User area forms (Bootstrap default was 14 px bold) */
+.form-horizontal .control-label {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Checkboxes and radios in the brand accent, not the browser blue */
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: var(--mf-accent);
+}
+
 .mf-form-sheet .help-block {
   color: var(--mf-text-muted);
   font-size: 12px;
@@ -1415,64 +1651,127 @@ select[multiple].form-control {
 }
 
 /* ----------------------------------------------------------------------------
- * 15. Login & Recovery — Deep Carbono (#0d0d0d) + Quadrant Symbol + MartFlow Card
+ * 15. Login & Recovery — same frame as the Roundcube mARTdesign login (v2.11):
+ *     page in the current theme (Creme / Carbono), static hex grid on the top-left,
+ *     hex grid with the orange trace on the bottom-right, centered logo + eyebrow +
+ *     title + card, no title bar, notices sitting on top of the footer.
  * ---------------------------------------------------------------------------- */
+:root,
+[data-theme="creme"] {
+  --mf-pattern-line: #cbc6b5;
+  --mf-auth-input: #f3f0e4;
+  --mf-auth-card-shadow: 0 20px 44px -18px rgba(26, 26, 26, 0.22);
+}
+
+[data-theme="carbono"] {
+  --mf-pattern-line: #404040;
+  --mf-auth-input: #0d0d0d;
+  --mf-auth-card-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.55);
+}
+
 body.page-login,
 body.page-login-mfa,
 body.page-password-recover,
 body.page-password-change {
-  background-color: #0d0d0d !important;
-  color: #fcf9e0 !important;
   position: relative;
   overflow-x: hidden;
-  --mf-page: #0d0d0d;
-  --mf-header: #161616;
-  --mf-panel: #1a1a1a;
-  --mf-surface: #161616;
-  --mf-input-bg: #111111;
-  --mf-border: #2a2a2a;
-  --mf-border-subtle: #2a2a2a;
-  --mf-text: #fcf9e0;
-  --mf-text-body: #a09880;
-  --mf-text-muted: #a09880;
-  --mf-text-label: #a09880;
-  color-scheme: dark;
 }
 
-body.page-login::before,
-body.page-login-mfa::before,
-body.page-password-recover::before,
-body.page-password-change::before {
-  content: "";
+/* Background stage (templates/auth_background.tpl) */
+.pfa-auth-stage {
   position: fixed;
   inset: 0;
-  background-image: url("../images/brand/pontos-hex-carbono.svg");
-  background-repeat: no-repeat;
-  background-position: left top;
-  background-size: 760px auto;
-  opacity: 0.4;
+  overflow: hidden;
   pointer-events: none;
   z-index: 0;
 }
 
-body.page-login::after,
-body.page-login-mfa::after,
-body.page-password-recover::after,
-body.page-password-change::after {
-  content: "";
-  position: fixed;
+.pfa-auth-svg {
+  position: absolute;
+  height: 60%;
+  width: auto;
+  max-width: 68vw;
+  display: block;
+}
+
+.pfa-auth-svg .l {
+  fill: none;
+  stroke: var(--mf-pattern-line);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.pfa-auth-svg .d {
+  fill: var(--mf-pattern-line);
+}
+
+/* Orange trace: one dash per route, born at the first vertex, runs along the grid
+   edges and shrinks into the last vertex; 5 routes in turn, 21 s cycle */
+.pfa-auth-svg .a {
+  fill: none;
+  stroke: var(--mf-accent);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 30 200;
+  stroke-dashoffset: 31;
+}
+
+.pfa-auth-svg .a-p1 { animation: pfa-hex-trace-1 21s linear infinite; }
+.pfa-auth-svg .a-p2 { animation: pfa-hex-trace-2 21s linear infinite; }
+.pfa-auth-svg .a-p3 { animation: pfa-hex-trace-3 21s linear infinite; }
+.pfa-auth-svg .a-p4 { animation: pfa-hex-trace-4 21s linear infinite; }
+.pfa-auth-svg .a-p5 { animation: pfa-hex-trace-5 21s linear infinite; }
+
+.pfa-hex-grade {
+  top: 0;
+  left: 0;
+  opacity: 0.9;
+}
+
+.pfa-hex-rede {
   right: 0;
   bottom: 0;
-  width: 70vw;
-  max-width: 960px;
-  height: 70vh;
-  max-height: 620px;
-  background-image: url("../images/brand/simbolo-inf-dir-carbono.svg");
-  background-repeat: no-repeat;
-  background-position: right bottom;
-  background-size: contain;
-  pointer-events: none;
-  z-index: 0;
+  opacity: 0.95;
+}
+
+@keyframes pfa-hex-trace-1 {
+  0% { stroke-dashoffset: 31; }
+  17.2%, 100% { stroke-dashoffset: -101; }
+}
+
+@keyframes pfa-hex-trace-2 {
+  0%, 20% { stroke-dashoffset: 31; }
+  37.2%, 100% { stroke-dashoffset: -101; }
+}
+
+@keyframes pfa-hex-trace-3 {
+  0%, 40% { stroke-dashoffset: 31; }
+  57.2%, 100% { stroke-dashoffset: -101; }
+}
+
+@keyframes pfa-hex-trace-4 {
+  0%, 60% { stroke-dashoffset: 31; }
+  77.2%, 100% { stroke-dashoffset: -101; }
+}
+
+@keyframes pfa-hex-trace-5 {
+  0%, 80% { stroke-dashoffset: 31; }
+  97.2%, 100% { stroke-dashoffset: -101; }
+}
+
+/* Reduced motion: no movement, one route already drawn (the stage is never empty) */
+@media (prefers-reduced-motion: reduce) {
+  .pfa-auth-svg .a-p1 {
+    animation: none !important;
+    stroke-dasharray: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+
+  .pfa-auth-svg .a:not(.a-p1) {
+    display: none !important;
+  }
 }
 
 body.page-login .mf-main,
@@ -1482,67 +1781,78 @@ body.page-password-change .mf-main {
   position: relative;
   z-index: 1;
   justify-content: center;
-  padding-top: 72px;
-  padding-bottom: 36px;
+  align-items: center;
+  padding: 48px 16px 40px;
 }
 
-body.page-login .mf-logo-pos,
-body.page-login-mfa .mf-logo-pos,
-body.page-password-recover .mf-logo-pos,
-body.page-password-change .mf-logo-pos { display: none !important; }
-
-body.page-login .mf-logo-neg,
-body.page-login-mfa .mf-logo-neg,
-body.page-password-recover .mf-logo-neg,
-body.page-password-change .mf-logo-neg { display: block !important; }
+body.page-login .footer,
+body.page-login-mfa .footer,
+body.page-password-recover .footer,
+body.page-password-change .footer {
+  position: relative;
+  z-index: 1;
+}
 
 div#login {
-  max-width: 440px !important;
+  max-width: 420px !important;
   width: 100%;
   margin: 0 auto;
-  padding: 0 16px;
+  padding: 0;
 }
 
 div#login .pfa-login-header {
-  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 24px;
 }
 
-.pfa-brand-zigzag {
-  display: block;
-  width: 48px;
-  height: 12px;
-  margin-bottom: 10px;
+div#login .pfa-login-logo {
+  height: 34px;
+  width: auto;
+  margin-bottom: 22px;
 }
 
 div#login .pfa-login-eyebrow {
-  font-size: 10px;
-  font-weight: 700;
+  font-family: var(--mf-font-sans);
+  font-size: 14px;
+  font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #a09880;
-  margin: 0 0 6px 0;
+  color: var(--mf-accent-text);
+  margin: 0 0 12px 0;
 }
 
-div#login h2.h2 {
-  font-family: var(--mf-font-sans);
-  font-size: 20px;
+div#login .pfa-login-title {
+  font-family: var(--mf-font-display);
+  font-size: 26px;
   font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.35;
-  color: #fcf9e0;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  color: var(--mf-text);
   margin: 0;
 }
 
+div#login .pfa-login-lead {
+  max-width: 360px;
+  margin: 10px 0 0 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--mf-text-body);
+}
+
 div#login .well {
-  background-color: #161616;
-  border: 1px solid #2a2a2a;
+  background-color: var(--mf-surface);
+  border: 1px solid var(--mf-border);
   border-radius: 16px !important;
   padding: 28px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.55);
+  margin-bottom: 0;
+  box-shadow: var(--mf-auth-card-shadow);
 }
 
 div#login label {
-  color: #a09880;
+  color: var(--mf-text-body);
   font-size: 12.5px;
   font-weight: 600;
   margin-bottom: 6px;
@@ -1553,10 +1863,10 @@ div#login select,
 div#login select.flat {
   display: block;
   width: 100%;
-  background-color: #0d0d0d;
-  border: 1px solid #2a2a2a;
+  background-color: var(--mf-auth-input);
+  border: 1px solid var(--mf-border);
   border-radius: 12px !important;
-  color: #fcf9e0;
+  color: var(--mf-text);
   height: 44px;
   padding: 9px 14px;
   font-family: var(--mf-font-sans);
@@ -1565,6 +1875,7 @@ div#login select.flat {
   transition: border-color 150ms ease, box-shadow 150ms ease;
 }
 
+div#login .form-control:focus,
 div#login select:focus,
 div#login select.flat:focus {
   border-color: var(--mf-accent) !important;
@@ -1572,7 +1883,11 @@ div#login select.flat:focus {
   outline: none;
 }
 
-div#login select option,
+div#login select option {
+  background-color: var(--mf-surface);
+  color: var(--mf-text);
+}
+
 [data-theme="carbono"] select option {
   background-color: #161616;
   color: #fcf9e0;
@@ -1593,27 +1908,54 @@ div#login .reset-button {
 
 div#login .reset-button .btn-default {
   width: 100%;
-  background-color: #1e1e1e !important;
-  border-color: #2a2a2a !important;
-  color: #a09880 !important;
+  background-color: var(--mf-btn-sec-bg) !important;
+  border-color: var(--mf-border) !important;
+  color: var(--mf-text-body) !important;
 }
 
 div#login .pfa-login-alt {
   margin-top: 18px;
   padding-top: 16px;
-  border-top: 1px solid #2a2a2a;
+  border-top: 1px solid var(--mf-border);
   text-align: center;
   font-size: 13px;
 }
 
+/* Link on a light card: dark text, underline in the accent (AA without darkening the accent) */
 div#login .pfa-login-alt a {
-  color: var(--mf-accent);
+  color: var(--mf-text);
   font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: var(--mf-accent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+div#login .pfa-login-alt a:hover,
+div#login .pfa-login-alt a:focus {
+  color: var(--mf-text);
+  text-decoration-thickness: 3px;
+}
+
+[data-theme="carbono"] div#login .pfa-login-alt a {
+  color: var(--mf-accent-text);
   text-decoration: none;
 }
 
-div#login .pfa-login-alt a:hover {
+[data-theme="carbono"] div#login .pfa-login-alt a:hover,
+[data-theme="carbono"] div#login .pfa-login-alt a:focus {
+  color: #fcf9e0;
   text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  div#login .well {
+    padding: 22px 18px;
+  }
+
+  div#login .pfa-login-title {
+    font-size: 21px;
+  }
 }
 
 /* ----------------------------------------------------------------------------
@@ -1654,22 +1996,352 @@ div#login .pfa-login-alt a:hover {
 
 .pfa-footer-meta {
   font-size: 12px;
-  color: var(--mf-text-muted);
+  color: var(--mf-text-body);
 }
 
 .pfa-footer-meta a {
-  color: var(--mf-accent);
-  font-weight: 500;
+  color: var(--mf-text);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: var(--mf-accent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+.pfa-footer-meta a:hover,
+.pfa-footer-meta a:focus {
+  text-decoration-thickness: 3px;
+}
+
+[data-theme="carbono"] .pfa-footer-meta a {
+  color: var(--mf-accent-text);
   text-decoration: none;
 }
 
-.pfa-footer-meta a:hover {
+[data-theme="carbono"] .pfa-footer-meta a:hover,
+[data-theme="carbono"] .pfa-footer-meta a:focus {
+  color: var(--mf-text);
   text-decoration: underline;
 }
 
 .pfa-footer-sep {
   margin: 0 8px;
   opacity: 0.45;
+}
+
+/* ----------------------------------------------------------------------------
+ * 17. Client-facing UI (25/11/2026): tab filters, table cards, forwarding
+ *     column and admin domain badges
+ * ---------------------------------------------------------------------------- */
+
+/* Active tab: dark text with an accent bar (AA without darkening the accent) */
+.mf-tab-active {
+  color: var(--mf-text);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08), inset 0 -2px 0 var(--mf-accent);
+}
+
+[data-theme="carbono"] .mf-tab-active {
+  color: var(--mf-text);
+}
+
+.mf-tab,
+.mf-tab-active {
+  gap: 8px;
+  min-height: 36px;
+}
+
+.mf-tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  background-color: var(--mf-border-subtle);
+  color: var(--mf-text-body);
+}
+
+.mf-tab-active .mf-tab-count {
+  background-color: var(--mf-accent-soft);
+  color: var(--mf-text);
+}
+
+[data-theme="carbono"] .mf-tab-count {
+  background-color: #252525;
+}
+
+/* Filter bar: tabs on the left, domain + search on the right */
+.mf-filter-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.mf-filter-controls form {
+  margin: 0;
+}
+
+.mf-filter-domain .form-control,
+.mf-filter-search .form-control {
+  height: 36px;
+  border-radius: 10px !important;
+  background-color: var(--mf-surface);
+  border: 1px solid var(--mf-border);
+  color: var(--mf-text);
+  font-size: 13px;
+  box-shadow: none;
+}
+
+.mf-filter-domain .form-control {
+  min-width: 200px;
+  padding: 6px 12px;
+}
+
+.mf-filter-search {
+  position: relative;
+}
+
+.mf-filter-search .form-control {
+  width: 260px;
+  padding: 6px 12px 6px 34px;
+}
+
+.mf-filter-search-icon {
+  position: absolute;
+  top: 50%;
+  left: 11px;
+  width: 16px;
+  height: 16px;
+  margin-top: -8px;
+  fill: none;
+  stroke: var(--mf-text-muted);
+  stroke-width: 2;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+
+.mf-filter-domain .form-control:focus,
+.mf-filter-search .form-control:focus {
+  border-color: var(--mf-accent);
+  box-shadow: 0 0 0 2px rgba(245, 71, 31, 0.2);
+  outline: none;
+}
+
+[data-theme="carbono"] .mf-filter-domain .form-control,
+[data-theme="carbono"] .mf-filter-search .form-control {
+  background-color: #141414;
+}
+
+@media (max-width: 767px) {
+  .mf-filter-controls,
+  .mf-filter-controls form,
+  .mf-filter-domain .form-control,
+  .mf-filter-search .form-control {
+    width: 100%;
+  }
+}
+
+/* Table card: title, count and actions in the card header */
+.mf-table-card-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--mf-border-subtle);
+  background-color: var(--mf-surface);
+}
+
+.mf-table-card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-family: var(--mf-font-display);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--mf-text);
+}
+
+.mf-table-card-nav {
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--mf-border-subtle);
+}
+
+.mf-table-card-nav:last-child {
+  border-top: 1px solid var(--mf-border-subtle);
+  border-bottom: 0;
+}
+
+.mf-table-empty {
+  padding: 24px !important;
+  color: var(--mf-text-muted);
+}
+
+/* Forwarding column of the e-mail table */
+.list-col-forward {
+  min-width: 220px;
+}
+
+.mf-forward-none {
+  color: var(--mf-text-body);
+}
+
+.mf-forward-mode {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--mf-text-body);
+}
+
+.mf-forward-mode--only {
+  color: var(--mf-text);
+}
+
+.mf-forward-dest {
+  display: block;
+  color: var(--mf-text);
+  word-break: break-all;
+}
+
+/* Domain list: room for the longer quota / message-size headers */
+body.page-list-domain th.list-col-maxquota,
+body.page-list-domain th.list-col-max_domain_msg_mailsize {
+  min-width: 120px;
+}
+
+/* Admin list: managed domains as badges */
+.mf-domain-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  max-width: 520px;
+}
+
+.mf-badge-super {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  background-color: var(--mf-accent-soft);
+  border: 1px solid var(--mf-accent-border);
+  color: var(--mf-text);
+}
+
+/* Card title count: dark number (the orange badge text was 3.6:1) */
+.mf-table-card-title .mf-badge {
+  background-color: var(--mf-accent-soft);
+  color: var(--mf-text);
+}
+
+/* "Esqueci minha senha": link under "Entrar", 44 px target */
+div#login .pfa-login-forgot {
+  margin-top: 6px;
+  text-align: center;
+}
+
+div#login .pfa-login-forgot a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mf-text);
+  text-decoration: underline;
+  text-decoration-color: var(--mf-accent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+div#login .pfa-login-forgot a:hover,
+div#login .pfa-login-forgot a:focus {
+  text-decoration-thickness: 3px;
+}
+
+/* Phones: 44 px targets in the filter bar, tabs on one scrollable line, one gutter (16 px) */
+@media (max-width: 767px) {
+  .mf-page-header,
+  .mf-tab-strip {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .mf-filter-bar .mf-tabs {
+    flex-wrap: nowrap;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .mf-filter-bar .mf-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mf-filter-bar .mf-tab,
+  .mf-filter-bar .mf-tab-active,
+  .mf-filter-domain .form-control,
+  .mf-filter-search .form-control {
+    min-height: 44px;
+    height: 44px;
+  }
+
+  .mf-topbar .container-fluid {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .mf-topbar .container-fluid > .navbar-header,
+  .mf-topbar .container-fluid > .navbar-collapse {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+/* ----------------------------------------------------------------------------
+ * 18. Brand typography: Comfortaa (300-700, never 800) only in titles.
+ *     Everything else (text, subtitles, labels, badges, links, buttons, tabs,
+ *     menu, table headers, inputs) uses Geomanist through --mf-font-sans.
+ *     Both are served from public/fonts (section 1), no external requests;
+ *     the Geomanist files are copied to the server, not kept in git.
+ * ---------------------------------------------------------------------------- */
+:root {
+  --mf-font-display: "Comfortaa", "Geomanist", "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6,
+.mf-page-title,
+.mf-section-heading,
+.mf-table-card-title,
+.panel-title,
+.modal-title {
+  font-family: var(--mf-font-display);
+}
+
+/* Badges and counters are text, even inside a title */
+.mf-badge,
+.mf-badge-solid,
+.mf-badge-super,
+.mf-tab-count {
+  font-family: var(--mf-font-sans);
+}
+
+/* Comfortaa tops out at 700 */
+.mf-page-title {
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -29,13 +29,13 @@ class AliasHandler extends PFAHandler
             #                           editing?    form    list
             'status'           => self::pacol(0,          0,      0,      'html', ''                              , ''                                , '', array(),
                 array('not_in_db' => 1)),
-            'address'          => self::pacol($this->new, 1,      1,      'mail', 'alias'                         , 'pCreate_alias_catchall_text'),
-            'localpart'        => self::pacol($this->new, 0,      0,      'text', 'alias'                         , 'pCreate_alias_catchall_text'     , '',
+            'address'          => self::pacol($this->new, 1,      1,      'mail', 'pList_alias_address'           , 'pCreate_alias_catchall_text'),
+            'localpart'        => self::pacol($this->new, 0,      0,      'text', 'pList_alias_address'           , 'pCreate_alias_catchall_text'     , '',
                 /*options*/ array(),
                 /*not_in_db*/ 1),
             'domain'           => self::pacol($this->new, 0,      1,      'enum', ''                              , ''                                , '',
                 /*options*/ $this->allowed_domains),
-            'goto'             => self::pacol(1,          1,      1,      'txtl', 'to'                            , 'pEdit_alias_help'                , array()),
+            'goto'             => self::pacol(1,          1,      1,      'txtl', 'pList_alias_goto'              , 'pEdit_alias_help'                , array()),
             'is_mailbox'       => self::pacol(0,          0,      1,      'int', ''                             , ''                                , 0 ,
                 # technically 'is_mailbox' is bool, but the automatic bool conversion breaks the query. Flagging it as int avoids this problem.
                 # Maybe having a vbool type (without the automatic conversion) would be cleaner - we'll see if we need it.
@@ -166,6 +166,11 @@ class AliasHandler extends PFAHandler
             $this->struct['goto_mailbox']['editable']        = 0;
             $this->struct['goto_mailbox']['display_in_form'] = 0;
             $this->struct['goto_mailbox']['display_in_list'] = 0;
+        } else {
+            # mARTdesign: a mailbox's own alias is its forwarding setting, not a group
+            $this->struct['address']['label'] = Config::lang('pForward_address');
+            $this->struct['address']['desc']  = '';
+            $this->struct['goto']['label']    = Config::lang('pForward_goto');
         }
 
         if (!$this->new && $this->result['is_mailbox'] && $this->admin_username != '' && !authentication_has_role('global-admin')) {

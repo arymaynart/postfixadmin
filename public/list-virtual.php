@@ -295,6 +295,10 @@ foreach ($result as $row) {
             $row['v_active'] = ('t' == $row['v_active']) ? 1 : 0;
         }
     }
+    # mARTdesign: same date format as the other lists (dd/mm/aaaa)
+    if (!empty($row['modified']) && ($modified_ts = strtotime($row['modified'])) !== false) {
+        $row['modified'] = date('d/m/Y', $modified_ts);
+    }
     $tMailbox[] = $row;
 }
 
@@ -488,11 +492,11 @@ class cNav_bar
 
 
 $nav_bar_alias = new cNav_bar($PALANG['pOverview_alias_title'], $fDisplay, $CONF['page_size'], $pagebrowser_alias, $search);
-$nav_bar_alias->append_to_url = '&amp;domain=' . $fDomain;
+$nav_bar_alias->append_to_url = '&amp;domain=' . $fDomain . '&amp;tab=alias';
 
 $pagebrowser_mailbox = create_page_browser("$table_mailbox.username", $mailbox_pagebrowser_query, $sql_params);
 $nav_bar_mailbox = new cNav_bar($PALANG['pOverview_mailbox_title'], $fDisplay, $CONF['page_size'], $pagebrowser_mailbox, $search);
-$nav_bar_mailbox->append_to_url = '&amp;domain=' . $fDomain;
+$nav_bar_mailbox->append_to_url = '&amp;domain=' . $fDomain . '&amp;tab=mailbox';
 
 
 // this is why we need a proper template layer.
@@ -544,15 +548,17 @@ $smarty->assign('boolconf_used_quotas', Config::bool('used_quotas'));
 $smarty->assign('divide_quota', $divide_quota);
 $smarty->assign('tCanAddMailbox', $tCanAddMailbox);
 $smarty->assign('display_mailbox_aliases', $display_mailbox_aliases);
-if (isset($_GET ['tab'])) {
-    $_SESSION ['tab'] = $_GET ['tab'];
+// mARTdesign: the tabs are filters, one table at a time; "E-mails" (mailbox) by default.
+// The old "all" tab is gone; create / edit / delete come back with ?tab= of the table.
+$valid_tabs = array('mailbox', 'alias');
+if (Config::bool('alias_domain')) {
+    $valid_tabs[] = 'alias_domain';
 }
-//if (empty ($_GET ['tab']))
-// unset ($_SESSION ['tab']);
-if (!isset($_SESSION ['tab'])) {
-    $_SESSION ['tab'] = 'all';
+$tab = safeget('tab');
+if (!is_string($tab) || !in_array($tab, $valid_tabs, true)) {
+    $tab = 'mailbox';
 }
-$smarty->assign('tab', $_SESSION ['tab']);
+$smarty->assign('tab', $tab);
 $smarty->assign('smarty_template', 'list-virtual');
 $smarty->display('index.tpl');
 

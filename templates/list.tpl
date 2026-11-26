@@ -61,24 +61,6 @@
 <div id="{$id_div}" class="mf-content">
 {else}
 <div id="{$id_div}" class="mf-embedded-section">
-    <div class="mf-section-bar">
-        <h2 class="mf-section-heading">
-            {$mf_list_title}
-            <span class="mf-badge">{$RAW_items|count}</span>
-        </h2>
-        <div class="mf-page-header-actions">
-            <a href="list.php?table={$table|escape:"url"}&amp;output=csv&amp;domain={$domain_selected|escape:"url"}" role="button" class="mf-btn-secondary">
-                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                {$PALANG.download_csv}
-            </a>
-            {if $msg.can_create}
-                <a href="edit.php?table={$table|escape:"url"}{$tmpdomain}" role="button" class="mf-btn-primary">
-                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                    {$PALANG.{$formconf.create_button}}
-                </a>
-            {/if}
-        </div>
-    </div>
 {/if}
 
     {if $msg.show_simple_search && ($search|count > 0)}
@@ -91,7 +73,27 @@
         </div>
     {/if}
 
-    <div class="mf-table-wrapper">
+    <div class="mf-table-wrapper{if $is_embedded} mf-table-card{/if}">
+        {if $is_embedded}
+            <div class="mf-table-card-header">
+                <h2 class="mf-table-card-title">
+                    {$mf_list_title}
+                    <span class="mf-badge">{$RAW_items|count}</span>
+                </h2>
+                <div class="mf-page-header-actions">
+                    <a href="list.php?table={$table|escape:"url"}&amp;output=csv&amp;domain={$domain_selected|escape:"url"}" role="button" class="mf-btn-secondary">
+                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        {$PALANG.download_csv}
+                    </a>
+                    {if $msg.can_create}
+                        <a href="edit.php?table={$table|escape:"url"}{$tmpdomain}" role="button" class="mf-btn-primary">
+                            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            {$PALANG.{$formconf.create_button}}
+                        </a>
+                    {/if}
+                </div>
+            </div>
+        {/if}
         <div class="{if $table == 'domain'}domain-list-scroll{else}mf-table-scroll{/if}">
             <table class="table table-hover" id='admin_table'>
                 <thead>
@@ -157,6 +159,12 @@
                         {/if}
                         {elseif $field.type == 'bool'}
                         {assign "tmpkey" "_{$key}"}{$item.{$tmpkey}}
+                        {elseif $table == 'admin' && $key == 'domains'}
+                        {if $RAW_item.superadmin}
+                            <span class="mf-badge-super">{$PALANG.pAdminList_admin_super}</span>
+                        {else}
+                            <span class="mf-domain-badges">{foreach from=$item.$key item=mf_dom}<span class="mf-badge-solid">{$mf_dom}</span>{/foreach}</span>
+                        {/if}
                         {elseif $field.type == 'list'}
                         {foreach key=key2 item=field2 from=$item.$key}{$field2}<br>{/foreach}
                         {elseif $field.type == 'pass'}

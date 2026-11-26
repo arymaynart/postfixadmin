@@ -33,3 +33,6 @@ dbconfig.inc.php
 /build
 /tests/postfixadmin.sqlite.*.test
 /phpstorm-docker-dev/
+# Geomanist (atipo) is a commercial font: never commit the files to this public
+# repository. They are copied to public/fonts/ on the server at deploy time.
+public/fonts/geomanist-*

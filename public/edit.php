@@ -189,6 +189,8 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                 $bits = [];
                 $bits['domain'] = $_SESSION['list-virtual:domain'] ?? null;
                 $bits['limit'] = $_SESSION['list-virtual:limit'] ?? null;
+                $edited = $handler->result();
+                $bits['tab'] = list_virtual_tab_for_table((string) $table, !empty($edited['is_mailbox']));
                 header("Location: " . $formconf['listview'] . '?' . http_build_query(array_filter($bits)));
                 exit(0);
             }
@@ -236,7 +238,14 @@ if ($new) {
     $smarty->assign('submitbutton', Config::lang($formconf['create_button']));
 } else {
     $smarty->assign('mode', 'edit');
-    $smarty->assign('formtitle', Config::lang($formconf['formtitle_edit']));
+    $formtitle = Config::lang($formconf['formtitle_edit']);
+    $current = $handler->result();
+    if ($table == 'alias' && !empty($current['is_mailbox'])) {
+        # mARTdesign: editing a mailbox's own alias means editing its forwarding
+        $formtitle = Config::lang('pForward_title');
+        $smarty->assign('forward_mode', true);
+    }
+    $smarty->assign('formtitle', $formtitle);
     $smarty->assign('submitbutton', Config::lang('save'));
 }
 

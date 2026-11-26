@@ -9,7 +9,7 @@
 		{if $CONF.show_status===YES}<th></th>{/if}
 		<th>{$PALANG.pOverview_mailbox_username}</th>
 		{if $display_mailbox_aliases==true}
-			<th>{$PALANG.to}</th>
+			<th class="list-col-forward">{$PALANG.pOverview_forward_col}</th>
 		{/if}
 		<th>{$PALANG.name}</th>
 		{if $CONF.quota===YES}<th>{$PALANG.pOverview_mailbox_quota}</th>{/if}
@@ -35,20 +35,15 @@
 			{/if}
 			</td>
 			{if $display_mailbox_aliases==true}
-				<td>
-				{if $item.goto_mailbox == 1}
-					{$PALANG.To_Mailbox}<br/>
+				<td class="list-col-forward">
+				{if empty($item.goto_other)}
+					<span class="mf-forward-none">{$PALANG.pOverview_forward_none}</span>
 				{else}
-					{$PALANG.To_Forward_Only}<br/>
+					<span class="mf-forward-mode{if $item.goto_mailbox != 1} mf-forward-mode--only{/if}">{if $item.goto_mailbox == 1}{$PALANG.pOverview_forward_copy}{else}{$PALANG.pOverview_forward_only}{/if}</span>
+					{foreach from=$item.goto_other item=item2 key=j}
+						<span class="mf-forward-dest">{if $search eq ""}{$item2}{else}{$item2|replace:$search:"<span class='searchresult'>$search</span>"}{/if}</span>
+					{/foreach}
 				{/if}
-				{foreach from=$item.goto_other item=item2 key=j}
-					{if $search eq ""}
-						{$item2}
-					{else}
-						{$item2|replace:$search:"<span class='searchresult'>$search</span>"}
-					{/if}
-					<br/>
-				{/foreach}
 				</td>
 			{/if}
 			<td>{$item.name}</td>
@@ -110,7 +105,7 @@
 			{if $authentication_has_role.global_admin!==true && $CONF.alias_control_admin===YES}{assign var="edit_aliases" value=1}{/if}
 			{if $authentication_has_role.global_admin==true && $CONF.alias_control===YES}{assign var="edit_aliases" value=1}{/if}
 			{if $edit_aliases==1}
-				<td class="list-col-action"><a class="pfa-action-btn pfa-btn-alias" title="{$PALANG.alias}" aria-label="{$PALANG.alias}" href="edit.php?table=alias&amp;edit={$item.username|escape:"url"}"><svg class="pfa-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><polyline points="15 14 20 9 15 4"/><path d="M4 20v-7a4 4 0 0 1 4-4h12"/></svg></a></td>
+				<td class="list-col-action"><a class="pfa-action-btn pfa-btn-alias" title="{$PALANG.pForward_button}" aria-label="{$PALANG.pForward_button}" href="edit.php?table=alias&amp;edit={$item.username|escape:"url"}"><svg class="pfa-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><polyline points="15 14 20 9 15 4"/><path d="M4 20v-7a4 4 0 0 1 4-4h12"/></svg></a></td>
 			{/if}
 			<td class="list-col-action"><a class="pfa-action-btn pfa-btn-edit" title="{$PALANG.edit}" aria-label="{$PALANG.edit}" href="edit.php?table=mailbox&amp;edit={$item.username|escape:"url"}"><svg class="pfa-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></a></td>
 			<td class="list-col-action">

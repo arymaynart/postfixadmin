@@ -7,7 +7,7 @@
     <div class="mf-page-header-actions">
         <div class="mf-header-control">
             <form method="GET" action="">
-                <input type="text" id="q" name="q" class="form-control" style="width:280px;" value="{$q}" autofocus="autofocus"
+                <input type="text" id="q" name="q" class="form-control" value="{$q}" autofocus="autofocus"
                        placeholder="{$PALANG.pMain_global_search_placeholder}"
                        aria-label="{$PALANG.pMain_global_search}">
                 <button class="mf-btn-primary" type="submit">

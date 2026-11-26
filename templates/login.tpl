@@ -1,22 +1,10 @@
-<nav class="navbar navbar-default navbar-fixed-top mf-topbar">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <a class="navbar-brand" href='main.php'>
-                <img class="mf-logo-neg" src="{$rel_path}images/brand/martdesign-negativo-horizontal.svg" alt="mARTdesign"/>
-            </a>
-            {if $CONF.show_header_text==='YES' && $CONF.header_text}
-                <h2>{$CONF.header_text}</h2>
-            {/if}
-        </div>
-    </div>
-</nav>
-
 <div id="login" class="container">
 
     <div class="pfa-login-header">
-        <img class="pfa-brand-zigzag" src="{$rel_path}images/brand/zigue-zague-laranja.svg" alt="" aria-hidden="true"/>
-        <p class="pfa-login-eyebrow">{if $logintype=='admin'}Painel de E-mail · Administração{else}Painel de E-mail · Usuário{/if}</p>
-        <h2 class="h2">{if $logintype=='admin'}{$PALANG.pLogin_welcome}{else}{$PALANG.pUsersLogin_welcome}{/if}</h2>
+        <img class="pfa-login-logo mf-logo-pos" src="{$rel_path}images/brand/martdesign-positivo-horizontal.svg" alt="mARTdesign"/>
+        <img class="pfa-login-logo mf-logo-neg" src="{$rel_path}images/brand/martdesign-negativo-horizontal.svg" alt="mARTdesign"/>
+        <p class="pfa-login-eyebrow">{if $logintype=='admin'}{$PALANG.pLogin_eyebrow_admin}{else}{$PALANG.pLogin_eyebrow_user}{/if}</p>
+        <h1 class="pfa-login-title">{$PALANG.pLogin_title}</h1>
     </div>
 
     <div class="well">
@@ -25,21 +13,12 @@
             <input type="hidden" name="token" value="{$smarty.session.PFA_token|escape:"url"}"/>
             <div class="form-group">
                 <label for="fUsername">{$PALANG.pLogin_username}:</label>
-                <input class="form-control" type="text" name="fUsername" id="fUsername"/>
+                <input class="form-control" type="text" name="fUsername" id="fUsername" autocomplete="username"/>
             </div>
             <div class="form-group">
                 <label for="fPassword">{$PALANG.password}:</label>
-                <input class="form-control" type="password" name="fPassword" id="fPassword"/>
+                <input class="form-control" type="password" name="fPassword" id="fPassword" autocomplete="current-password"/>
             </div>
-            {if $forgotten_password_reset}
-                <div class="form-group row">
-                    <div class="col-sm-6 col-sm-offset-3 reset-button">
-                        <a class="btn btn-default btn-block" role="button" href="password-recover.php">
-                            <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
-                            {$PALANG.pUsersLogin_password_recover}</a>
-                    </div>
-                </div>
-            {/if}
             <div class="form-group">
                 <label for=lang>{$PALANG.pLogin_language}:</label>
                 {$language_selector}
@@ -48,6 +27,11 @@
                 <button class="btn btn-primary btn-lg" type="submit" name="submit" value="{$PALANG.pLogin_button}"><span class="glyphicon glyphicon-log-in"
                                                     		aria-hidden="true"></span> {$PALANG.pLogin_button}</button>
             </div>
+            {if $forgotten_password_reset}
+                <div class="pfa-login-forgot">
+                    <a href="password-recover.php">{$PALANG.pUsersLogin_password_recover}</a>
+                </div>
+            {/if}
         </form>
         {if $logintype == 'admin'}
             <div class="pfa-login-alt">
