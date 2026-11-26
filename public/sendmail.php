@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $filled_fragment = apply_placeholders($raw_body, $vars, $is_html);
         $html_fragment = format_email_body_html($filled_fragment, $is_html);
 
-        $tBody = build_html_from_template($html_fragment, $fSubject);
+        $tBody = build_html_from_template($html_fragment, $fSubject, true);
         if ($tBody === false) {
             $tBody = $filled_fragment;
         }

@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                 $html_fragment = format_email_body_html($filled_fragment, $is_html);
                 $msg_id = '<' . sprintf('%.6f', microtime(true)) . '-' . md5($smtp_from_email . $fTo) . "@{$serverName}>";
 
-                $final_html = build_html_from_template($html_fragment, $clean_subject);
+                $final_html = build_html_from_template($html_fragment, $clean_subject, true);
                 if ($final_html !== false) {
                     list($mime_headers, $mime_body) = build_multipart_message(html_to_plain_text($final_html), $final_html);
 
